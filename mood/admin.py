@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Message, Medication
+
+#register your models
+admin.site.register(Message)
+admin.site.register(Medication)
+
+#register your models

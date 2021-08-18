@@ -1,0 +1,24 @@
+{% extends 'mood/layout.html'%}
+
+
+
+
+
+
+
+
+{% block body %}
+<h6> history of your mood </h6>
+<ol>
+    {% for message in message_history %}
+    <li> {{message.message}} </li>
+    {% empty %}
+    <li> no mood history ! </li>
+    {% endfor %}
+</ol>
+
+
+<!-- access using class attribute -->
+<h1> {{our_class.message}} </h1>
+
+{% endblock %}

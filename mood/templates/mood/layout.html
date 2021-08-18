@@ -14,9 +14,9 @@
 
 <div class="sidenav">
     <div class="col-12">
-		<a href="/">Home</a>
-		<a href="/create">My mood history</a>
-		<a href="/2">Are you anxious ?</a>
+		<a href ="{% url 'index' %}"> Home </a>
+		<a href="{% url 'mood_history' %}">My mood history</a>
+		<a href="/2">Are you depressed ?</a>
         <a href="{% url 'logout' %}"> Logout </a>
         </div>
 	</div>
