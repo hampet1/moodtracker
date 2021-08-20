@@ -17,7 +17,7 @@ class Message(models.Model):
         return f"{self.user},{self.message},{self.date_created}"
 
 class Medication(models.Model):
-    user = models.ManyToManyField(User, blank=True, related_name="medication", null=True)
+    user = models.ManyToManyField(User, blank=True, related_name="medication")
     name_of_medication = models.CharField(max_length=64)
     # black true means that it can be empty
     description = models.TextField(blank=True, null=True)

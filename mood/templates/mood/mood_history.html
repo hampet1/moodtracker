@@ -6,16 +6,28 @@
 
 
 
-
 {% block body %}
+<style>
+ul.no-bullets {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+</style>
+
+
+
 <h6> history of your mood </h6>
-<ol>
+
+
+<ul class="no-bullets">
     {% for message in message_history %}
     <li> {{message.message}} </li>
     {% empty %}
     <li> no mood history ! </li>
     {% endfor %}
-</ol>
+</ul>
 
 
 <!-- access using class attribute -->
