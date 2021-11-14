@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+K_NAME = "JDKSJKDJS"
 
 # Application definition
 
