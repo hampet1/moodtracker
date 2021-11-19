@@ -2,15 +2,22 @@
     height:200%;
     width:260px;
     position: fixed;
-    z-index:1;
+    z-index:1000000000000000;
     top:0;
     left:0;
-    background-color:#111;
+    background-color:yellow;
     overflow-x: :hidden;
     padding-top:20px;
 }
 
-        .sidenav a {
+
+#content {
+    width:22%;
+    background-color:red;
+
+}
+
+.sidenav a {
     padding:6px 8px 6px 16px;
     text-decoration: none;
     font-size:25px;
@@ -18,11 +25,11 @@
     display:block;
 }
 
-        .sidenav a:hover{
+.sidenav a:hover{
     color:#f1f1f1;
 }
 
-        .main{
+.main{
     margin-left:60px;
     padding: 0px 10px;
     text-align:center;

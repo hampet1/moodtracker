@@ -21,10 +21,11 @@
 </form>
    <br>
             {% if message %}
-            <h5>{{message}}</h5>
+            <h5 class="p-2 mb-2 bg-warning text-dark">{{message}}</h5>
             {% endif %}
+    <hr>
     <br>
-    <h5> Don't have an account? <a class="btn btn-success" href="{% url 'signup' %}" role="button">register</a></h5>
+    <h5> Don't have an account? <br><br><a class="btn btn-success" href="{% url 'signup' %}" role="button">create new account</a></h5>
 
 
         </div>

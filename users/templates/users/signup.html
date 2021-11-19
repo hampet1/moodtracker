@@ -16,13 +16,14 @@
 
       {% endif %}
       {% for error in field.errors %}
-        <p style="color: red">{{ error }}</p>
+      <br>
+        <p class="p-2 mb-2 bg-warning text-dark">{{ error }}</p>
       {% endfor %}
     </div>
 
     </p>
   {% endfor %}
-
+  <br>
   <button type="submit" class="btn btn-success">Sign up</button>
     </form>
         <hr>
