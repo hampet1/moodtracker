@@ -4,22 +4,35 @@
 
 {% block form %}
 <div id="form">
+    <div class="col-md-12 mb-3">
     <form action="{% url 'login'%}" method="post">
         {% csrf_token %}
-        <input type="text" name="username" placeholder="password">
-        <input type="password" name="password" placeholder="password"> <br><br><br>
-        <input class="btn btn-primary" type="submit" value="Login">
-    </form>
+
+  <div class="form-group">
+    <label for="exampleInput">Username</label>
+    <input type="text" name="username", class="form-control" id="exampleInput" placeholder="e.g. John32">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Password</label>
+    <input type="password" name="password"class="form-control" id="exampleInputPassword1" placeholder="e.g. _%sbur2">
+  </div>
+  </br>
+  <button type="submit" class="btn btn-primary">Log in</button>
+</form>
+   <br>
             {% if message %}
             <h5>{{message}}</h5>
             {% endif %}
     <br>
-    <h5> Don't have an account? register <a href="{% url 'signup' %}">here</a></h5>
-</div>
+    <h5> Don't have an account? <a class="btn btn-success" href="{% url 'signup' %}" role="button">register</a></h5>
+
+
+        </div>
+    </div>
 {% endblock %}
 
     {% block banner %}
-    <h1> Mood tracker </h1><br>
+    <h1 style="font-size: 300%"> Mood tracker </h1><br>
     <h3> monitor your mood and explore yourself </h3>
 
 

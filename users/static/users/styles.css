@@ -1,8 +1,21 @@
 body {
-    background-color:#FEFBE9;
-    text-align:center;
+	background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	background-size: 400% 400%;
+	animation: gradient 20s ease infinite;
+	height: 100vh;
+	text-align:center;
+}
 
-
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 #wrapper {
     width: 80%;
@@ -12,7 +25,7 @@ body {
 }
 
 #main-form {
-    background-color:#8ee4af;
+    background-color:transparent;
     width: 100%;
     margin: auto;
     margin-top: 15%;
@@ -23,18 +36,27 @@ body {
 }
 
 #side-banner {
+
     float:left;
     width:36%;
-    background-color:#FEFBE9;
-    font-family: "Arvo", sans-serif;
-    font-weight: 900;
-    color: #ff5200;
+    background-color:transparent;
+    font-family: Arial;
+    color: #0C0032;
 
 }
 
+#side-banner.h1 {
+    font-weight: bold;
+}
+
+
+#side-banner.h3 {
+    font-weight: bold;
+}
+
 #form {
-    background-color:#8ee4af;
-    width: 50%;
+    background-color:transparent;
+    width: 45%;
     margin: auto;
     margin-top: 2%;
     padding: 2%;
@@ -43,6 +65,7 @@ body {
     margin-top: -5%;
     margin-bottom: 15%;
     clear: both;
+    border: 1.5px solid black;
 
 }
 
