@@ -1,12 +1,17 @@
 {% extends 'users/layout.html'%}
 
 
-{% block body %}
-    <!-- inside double curly brackets i have access to the request as well -->
-<h1> welcome {{ request.user.first_name }} </h1>
-<ul>
-    <li> User name: {{request.user.username}} </li>
-    <li> User email: {{request.user.email}} </li>
-</ul>
-<a href="{% url 'logout' %}"> Log out </a>
-{% endblock %}
+    <div id="wrapper">
+
+
+        {% block login %}
+            <!-- inside double curly brackets i have access to the request as well -->
+        <h1> welcome {{ request.user.first_name }} </h1>
+        <ul>
+            <li> User name: {{request.user.username}} </li>
+            <li> User email: {{request.user.email}} </li>
+        </ul>
+        <a href="{% url 'logout' %}"> Log out </a>
+        {% endblock %}
+
+    </div>

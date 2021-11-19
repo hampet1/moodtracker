@@ -1,13 +1,40 @@
 {% extends 'users/layout.html' %}
 
-{% block body %}
-
-
+{% block form %}
+<div id="form">
     <h2>Sign up</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign Up</button>
-  </form>
+    <br>
+<form method="post">
+  {% csrf_token %}
+  {% for field in form %}
+    <div class="col-auto">
 
-{% endblock %}
+
+      {{ field.label_tag }}<br>
+      {{ field }} <br>
+      {% if field.help_text %}
+
+      {% endif %}
+      {% for error in field.errors %}
+        <p style="color: red">{{ error }}</p>
+      {% endfor %}
+    </div>
+
+    </p>
+  {% endfor %}
+
+  <button type="submit" class="btn btn-success">Sign up</button>
+    </form>
+        <hr>
+      </br>
+        <a class="btn btn-primary" href="{% url 'login' %}" role="button"> login </a>
+    </div>
+
+    {% endblock %}
+
+  {% block banner %}
+    <h1> Mood tracker </h1><br>
+    <h3> monitor your mood and explore yourself </h3>
+
+
+    {% endblock %}

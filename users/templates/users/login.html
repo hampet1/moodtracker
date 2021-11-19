@@ -1,17 +1,26 @@
 {% extends 'users/layout.html'%}
 
-{% block body %}
 
 
+{% block form %}
+<div id="form">
     <form action="{% url 'login'%}" method="post">
         {% csrf_token %}
         <input type="text" name="username" placeholder="password">
-        <input type="password" name="password" placeholder="password">
-        <input type="submit" value="Login">
-    </form><br>
+        <input type="password" name="password" placeholder="password"> <br><br><br>
+        <input class="btn btn-primary" type="submit" value="Login">
+    </form>
             {% if message %}
             <h5>{{message}}</h5>
             {% endif %}
     <br>
     <h5> Don't have an account? register <a href="{% url 'signup' %}">here</a></h5>
+</div>
 {% endblock %}
+
+    {% block banner %}
+    <h1> Mood tracker </h1><br>
+    <h3> monitor your mood and explore yourself </h3>
+
+
+    {% endblock %}

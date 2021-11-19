@@ -1,5 +1,48 @@
 body {
+    background-color:#FEFBE9;
     text-align:center;
-    margin-top: 100px;
+
 
 }
+#wrapper {
+    width: 80%;
+    overflow: hidden;
+    margin: auto;
+
+}
+
+#main-form {
+    background-color:#8ee4af;
+    width: 100%;
+    margin: auto;
+    margin-top: 15%;
+
+    border-radius: 25px;
+
+
+}
+
+#side-banner {
+    float:left;
+    width:36%;
+    background-color:#FEFBE9;
+    font-family: "Arvo", sans-serif;
+    font-weight: 900;
+    color: #ff5200;
+
+}
+
+#form {
+    background-color:#8ee4af;
+    width: 50%;
+    margin: auto;
+    margin-top: 2%;
+    padding: 2%;
+    border-radius: 20px;
+    float:right;
+    margin-top: -5%;
+    margin-bottom: 15%;
+    clear: both;
+
+}
+

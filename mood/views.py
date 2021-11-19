@@ -1,24 +1,17 @@
 from django.shortcuts import render
-from django import forms
-import sys
-
 from keras.models import model_from_json
-
 from .models import Message, Medication
 from django.contrib.auth.models import User
-from django.http import JsonResponse
-# Create your views here.
 from django.template.defaulttags import register
-
 # other packages
 import os
-
-# text processing
+# text processing and keras
 import re
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 from tensorflow.keras.preprocessing.text import one_hot
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from keras.models import model_from_json
 
 
 

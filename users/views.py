@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
@@ -25,6 +25,18 @@ def index(request):
         return HttpResponseRedirect(reverse("login"))
     # rendering different app
     return render(request, "mood/index.html")
+
+
+def signup_view(request):
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+        form.save()
+        username = form.cleaned_data.get('username')
+        password = form.cleaned_data.get('password1')
+        user = authenticate(username=username, password=password)
+        login(request, user)
+        return redirect('index')
+    return render(request, 'signup.html', {'form': form})
 
 
 def login_view(request):
