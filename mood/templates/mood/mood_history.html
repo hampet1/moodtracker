@@ -17,13 +17,14 @@ ul.no-bullets {
 </style>
 
 
-
-<h6> history of your mood </h6>
+<br>
+<h4> history of {{user}}'s mood</h4><br>
 
 
 <ul class="no-bullets">
     {% for message in message_history %}
     <li> {{message.message}} </li>
+    <li> {{message.data_created}} </li>
     {% empty %}
     <li> no mood history ! </li>
     {% endfor %}
@@ -32,7 +33,16 @@ ul.no-bullets {
 
 
 
+
 <!-- access using class attribute -->
 <h1> {{our_class.message}} </h1>
+<div style="background-color:yellow;">
+       {{bla|safe}}
+</div>
+
+
+<div style="width:500;height:100">
+{{ graph }}
+</div>
 
 {% endblock %}

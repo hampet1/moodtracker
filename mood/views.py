@@ -1,55 +1,28 @@
 from django.shortcuts import render
 from keras.models import model_from_json
-from .models import Message, Medication
+from .models import Message, Medication, Sentiment
 from django.contrib.auth.models import User
 from django.template.defaulttags import register
+# keras model manipulation
+from keras.models import model_from_json
 # other packages
 import os
-# text processing and keras
-import re
-from nltk.corpus import stopwords
-from nltk.stem.porter import PorterStemmer
-from tensorflow.keras.preprocessing.text import one_hot
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from keras.models import model_from_json
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# helper funtions
+from .utils import input_layer
+
+# python stream manipulation
+from io import BytesIO
+
+import plotly.graph_objects as go
 
 
 
 weights_path = os.getcwd() + '\model.h5'
 model_path = os.getcwd() + '\model.json'
-
-
-
-
-def preprocessing(data):
-    ps = PorterStemmer()
-    corpus = []
-    data = data.split('.')
-    for i in data:
-        review = re.sub('[^a-zA-Z]', ' ', i)
-        review = review.lower()
-        review = review.split()
-        review = [ps.stem(word) for word in review if not word in stopwords.words('english')]
-        review = ' '.join(review)
-        if review != '':
-            corpus.append(review)
-    return corpus
-
-
-def vectorize_sentence(corpus):
-    # Vocabulary size
-    voc_size=10000
-    onehot_repr=[one_hot(words,voc_size)for words in corpus]
-    # creating embedding layer as the input layer for our model we fixed lenght set to 20
-    sent_length=35
-    # pad sequence - we have to always input vector of the same size, but sentences are of
-    embedded_words=pad_sequences(onehot_repr,padding='pre',maxlen=sent_length)
-    return embedded_words
-
-def input_layer(data):
-    corpus = preprocessing(data)
-    embedded_input = vectorize_sentence(corpus)
-    return embedded_input
 
 
 
@@ -88,17 +61,14 @@ def message(request):
 
         cur_user = User.objects.get(id=user.id)
         message = request.POST['message']
-
+        Message.objects.create(user=user, message=message)
         if 'med-type' in request.POST:
             med_type = request.POST['med-type']
         else:
             med_type = False
         rating = request.POST['rating']
         # medication = request.POST['medication']
-        # user is the related name
-        print("med type is", med_type)
-        print("rating is: ", rating)
-        print("mesage is ", message)
+
 
         # load json and create model
         json_file = open(model_path, 'r')
@@ -113,13 +83,33 @@ def message(request):
         # predictions
         pred = (loaded_model.predict(text) > 0.5).astype("int32")
         # our model prediction
-        print("our prediction is: ",pred)
-        Message.objects.create(user=user, message=message)
+        print("our prediction is: ", pred)
+        if np.average(pred) < 0.5:
+            sentiment = 0
+        else:
+            sentiment = 1
+        Sentiment.objects.create(user=user, sentiment=sentiment)
+
+        all_sentiment = Sentiment.objects.filter(user=user)
+        # it's easier to work with dataframe
+        df_1 = pd.DataFrame(all_sentiment)
+        # this format is better
+        df_2 = pd.DataFrame(all_sentiment.values())
+        # we can bring it to html
+        df_2 = df_2.to_html()
+        print("df1",df_1)
+        print("df2",df_2)
+
+
+
         return render(request, "mood/mood_history.html",
                       {
                           'user': user.username,
-                          'message': Message.objects.get(pk=user.id)
+                          'message': Message.objects.get(pk=user.id),
+                          'bla': df_2
                           # pick possible medication
+
+
                       })
 
     else:

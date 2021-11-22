@@ -16,6 +16,7 @@
 
 
 <div class="container-fluid">
+	<div id="wrapper">
 	<div class="sidenav">
 		<div class="col-12">
 			<a href ="{% url 'index' %}"> Home </a>
@@ -27,7 +28,7 @@
 
 	<div id="content" name="content" class="main">
 		<div class="row justify-content-center">
-			<div class="col-8">
+			<div class="col-6">
 				<h1 class="mt-2">Mood tracker</h1>
 				<hr class="mt-0 mb-4">
 				{% block body %}

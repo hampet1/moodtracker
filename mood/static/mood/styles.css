@@ -1,19 +1,30 @@
+#wrapper {
+    width: 100%;
+    overflow: hidden;
+    margin: auto;
+    background-color:yellow;
+
+}
+
+
 .sidenav {
     height:200%;
-    width:260px;
+    width:20%;
     position: fixed;
-    z-index:1000000000000000;
+    z-index:1;
     top:0;
     left:0;
-    background-color:yellow;
+    background-color:#C3073F;
     overflow-x: :hidden;
     padding-top:20px;
 }
 
 
 #content {
-    width:22%;
-    background-color:red;
+    width:120%;
+    background-color:white;
+    float:left;
+    margin:auto;
 
 }
 
