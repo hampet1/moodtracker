@@ -1,10 +1,16 @@
+# for text processing
 import re
-import os
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 from tensorflow.keras.preprocessing.text import one_hot
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from keras.models import model_from_json
+
+# for creating streams (file-like objects)
+from io import BytesIO
+import base64
+
+# graphs
+import matplotlib.pyplot as plt
 
 
 
@@ -38,3 +44,39 @@ def input_layer(data):
     corpus = preprocessing(data)
     embedded_input = vectorize_sentence(corpus)
     return embedded_input
+
+
+def get_graph():
+    '''
+
+    delete the comments below
+    '''
+
+    buffer = BytesIO()
+    # here we communicate with plt
+    plt.savefig(buffer, format="png")
+    # set cursor to the biggining of the stream
+    buffer.seek(0)
+    # retrieve the entire content of the file
+    image_png = buffer.getvalue()
+    # encode our bytes-like object - return encoded bytes
+    graph = base64.b64encode(image_png)
+    # get string out of the bytes
+    graph = graph.decode('utf-8')
+    # free memory of the buffer
+    buffer.close()
+    return graph
+
+
+def get_chart(data, chart_type):
+    plt.switch_backend('AGG')
+    fig = plt.figure(figsize=(8,4))
+    if chart_type == 'barplot':
+        plt.bar(data, height=len(data))
+    elif chart_type == 'lineplot':
+        plt.plot(data['date_created'], data['sentiment'], marker='o')
+    else:
+        return "something went wrong"
+    plt.tight_layout()
+    chart = get_graph()
+    return chart

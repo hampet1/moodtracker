@@ -11,8 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# helper funtions
-from .utils import input_layer
+# helper funtions - for embedded layer of our model
+from .utils import input_layer, get_chart
 
 # python stream manipulation
 from io import BytesIO
@@ -56,6 +56,8 @@ def message(request):
     message - is related_name
     request.method == "POST"
     """
+
+    chart = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
 
@@ -77,13 +79,17 @@ def message(request):
         loaded_model = model_from_json(loaded_model_json)
         # load weights into new model
         loaded_model.load_weights(weights_path)
+        print("weights path", weights_path)
+        print("model path", model_path)
         # evaluate loaded model on test data
         loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         text = input_layer(message)
+        print("input layer text", text)
         # predictions
         pred = (loaded_model.predict(text) > 0.5).astype("int32")
+        print("pred:,", pred)
         # our model prediction
-        print("our prediction is: ", pred)
+
         if np.average(pred) < 0.5:
             sentiment = 0
         else:
@@ -91,24 +97,26 @@ def message(request):
         Sentiment.objects.create(user=user, sentiment=sentiment)
 
         all_sentiment = Sentiment.objects.filter(user=user)
+        print("all sentiment", all_sentiment)
         # it's easier to work with dataframe
         df_1 = pd.DataFrame(all_sentiment)
-        # this format is better
-        df_2 = pd.DataFrame(all_sentiment.values())
+
         # we can bring it to html
-        df_2 = df_2.to_html()
-        print("df1",df_1)
-        print("df2",df_2)
-
-
+        #df_2 = df_2.to_html()
+        df_data = pd.DataFrame(all_sentiment.values())
+        df_data = df_data.drop(columns='id')
+        print("df_data", df_data)
+        print("columns", df_data.columns)
+        # chart
+        chart = get_chart(df_data, 'lineplot')
 
         return render(request, "mood/mood_history.html",
                       {
                           'user': user.username,
                           'message': Message.objects.get(pk=user.id),
-                          'bla': df_2
+                          'bla': df_data,
                           # pick possible medication
-
+                           'chart': chart,
 
                       })
 

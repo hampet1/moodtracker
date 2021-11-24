@@ -31,7 +31,7 @@ ul.no-bullets {
 </ul>
 
 
-
+<h1>graph or table</h1>
 
 
 <!-- access using class attribute -->
@@ -41,8 +41,6 @@ ul.no-bullets {
 </div>
 
 
-<div style="width:500;height:100">
-{{ graph }}
-</div>
+<img src="data:image/png;base64, {{chart|safe}}">
 
 {% endblock %}
