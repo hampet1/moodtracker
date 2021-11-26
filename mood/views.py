@@ -79,12 +79,11 @@ def message(request):
         loaded_model = model_from_json(loaded_model_json)
         # load weights into new model
         loaded_model.load_weights(weights_path)
-        print("weights path", weights_path)
-        print("model path", model_path)
+
         # evaluate loaded model on test data
         loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         text = input_layer(message)
-        print("input layer text", text)
+
         # predictions
         pred = (loaded_model.predict(text) > 0.5).astype("int32")
         print("pred:,", pred)
@@ -97,7 +96,7 @@ def message(request):
         Sentiment.objects.create(user=user, sentiment=sentiment)
 
         all_sentiment = Sentiment.objects.filter(user=user)
-        print("all sentiment", all_sentiment)
+
         # it's easier to work with dataframe
         df_1 = pd.DataFrame(all_sentiment)
 
@@ -105,8 +104,7 @@ def message(request):
         #df_2 = df_2.to_html()
         df_data = pd.DataFrame(all_sentiment.values())
         df_data = df_data.drop(columns='id')
-        print("df_data", df_data)
-        print("columns", df_data.columns)
+
         # chart
         chart = get_chart(df_data, 'lineplot')
 

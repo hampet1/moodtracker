@@ -1,9 +1,13 @@
 # for text processing
 import re
+import os
+import pickle
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
-from tensorflow.keras.preprocessing.text import one_hot
+#from tensorflow.keras.preprocessing.text import one_hot
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+#from tensorflow.random import set_seed
+#set_seed(1)
 
 # for creating streams (file-like objects)
 from io import BytesIO
@@ -13,12 +17,18 @@ import base64
 import matplotlib.pyplot as plt
 
 
+# load my encoder
+with open(os.getcwd() + '\encoder', "rb") as f:
+    one_hot = pickle.load(f)
+
+print("one hot is on", one_hot)
 
 
 def preprocessing(data):
+    print("one hot is:", one_hot)
     ps = PorterStemmer()
-    corpus = []
     data = data.split('.')
+    corpus = []
     for i in data:
         review = re.sub('[^a-zA-Z]', ' ', i)
         review = review.lower()
@@ -43,6 +53,7 @@ def vectorize_sentence(corpus):
 def input_layer(data):
     corpus = preprocessing(data)
     embedded_input = vectorize_sentence(corpus)
+    print("embedded_input: ", embedded_input)
     return embedded_input
 
 
