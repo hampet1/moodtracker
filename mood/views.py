@@ -69,6 +69,7 @@ def message(request):
         else:
             med_type = False
         rating = request.POST['rating']
+        print("rating is ", rating)
         # medication = request.POST['medication']
 
 
@@ -93,7 +94,7 @@ def message(request):
             sentiment = 0
         else:
             sentiment = 1
-        Sentiment.objects.create(user=user, sentiment=sentiment)
+        Sentiment.objects.create(user=user, sentiment=sentiment, rating=3)
 
         all_sentiment = Sentiment.objects.filter(user=user)
 

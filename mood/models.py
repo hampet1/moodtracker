@@ -30,8 +30,10 @@ class Medication(models.Model):
 class Sentiment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sentiment", null=True)
     sentiment = models.IntegerField()
+    rating = models.PositiveIntegerField(null=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
 
     def __str__(self):
-        return f"{self.user}, {self.sentiment}, {self.date_created}"
+        return f"{self.user}, {self.sentiment}, {self.rating}, {self.date_created}"
+
