@@ -13,6 +13,7 @@ import pandas as pd
 
 # helper funtions - for embedded layer of our model
 from .utils import input_layer, get_chart
+from .forms import SearchForm
 
 # python stream manipulation
 from io import BytesIO
@@ -37,17 +38,28 @@ def get_range(value):
 
 
 def index(request):
+
     if request.user.is_authenticated:
         user = request.user
         cur_user = User.objects.get(id=user.id)
+
+
 
         return render(request, "mood/index.html",
                       {
                           'user': user.username,
                           # pick possible medication
-                          'meds': cur_user.medication.all()
+                          'meds': cur_user.medication.all(),
 
                       })
+    else:
+        hello = "djskdjsk"
+        return render(request, "mood/index.html",
+                      {
+                          'hello': hello,
+
+                      })
+
 
 
 def message(request):
@@ -68,8 +80,10 @@ def message(request):
             med_type = request.POST['med-type']
         else:
             med_type = False
-        rating = request.POST['rating']
-        print("rating is ", rating)
+
+
+
+
         # medication = request.POST['medication']
 
 
@@ -94,7 +108,13 @@ def message(request):
             sentiment = 0
         else:
             sentiment = 1
-        Sentiment.objects.create(user=user, sentiment=sentiment, rating=3)
+
+        if 'rating' in request.POST:
+            if sentiment is not None:
+                rating = request.POST['rating']
+                Sentiment.objects.create(user=user, sentiment=sentiment, rating=int(rating))
+        else:
+            Sentiment.objects.create(user=user, rating=0)
 
         all_sentiment = Sentiment.objects.filter(user=user)
 
@@ -105,18 +125,21 @@ def message(request):
         #df_2 = df_2.to_html()
         df_data = pd.DataFrame(all_sentiment.values())
         df_data = df_data.drop(columns='id')
-
+        print("dataframe: ", df_data
+              )
         # chart
-        chart = get_chart(df_data, 'lineplot')
-
+        hello = "hello"
+        chart_line = get_chart(df_data, 'lineplot')
+        chart_bar = get_chart(df_data, 'barplot')
         return render(request, "mood/mood_history.html",
                       {
                           'user': user.username,
                           'message': Message.objects.get(pk=user.id),
                           'bla': df_data,
                           # pick possible medication
-                           'chart': chart,
-
+                          'chart_line': chart_line,
+                          'chart_bar': chart_bar,
+                          'hello':hello,
                       })
 
     else:
@@ -131,10 +154,12 @@ def mood_history(request):
         user = request.user
         cur_user = User.objects.get(id=user.id)
         all_messages = User.objects.get(username=user)
+        form = SearchForm(request.POST or None)
         return render(request, "mood/mood_history.html",
                       {
                           "message_history": all_messages.user.all(),
-                          "our_class": Message.objects.get(id=1)
+                          "our_class": Message.objects.get(id=1),
+                          "form":form,
                       })
     else:
         pass

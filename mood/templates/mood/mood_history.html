@@ -20,6 +20,12 @@ ul.no-bullets {
 <br>
 <h4> history of {{user}}'s mood</h4><br>
 
+<form action="" method="POST">
+    {% csrf_token %}
+    {{form}}
+</form>
+
+<br><br><br>
 
 <ul class="no-bullets">
     {% for message in message_history %}
@@ -41,6 +47,7 @@ ul.no-bullets {
 </div>
 
 
-<img src="data:image/png;base64, {{chart|safe}}">
-
+<img src="data:image/png;base64, {{chart_line|safe}}">
+<br><br>
+<img src="data:image/png;base64, {{chart_bar|safe}}">
 {% endblock %}

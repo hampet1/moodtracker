@@ -35,6 +35,19 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 
 <h6> how are you feeling today? please shortly describe your day or your feelings</h6><br>
+<hr>
+<h3> Graph vs Table {{hello}} </h3><br>
+<p>{{hello}}</p>
+
+<form action=" " method="POST">
+    {% csrf_token %}
+    {{form}}
+    {{hello}}
+</form>
+
+<br>
+
+
 <form action="{% url 'message'%}", method="post">
     {% csrf_token %}
     <div class="input-group">
@@ -58,7 +71,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 <br><br>
                 <select class="form-control-dm custom-select" name="rating">
                   <option selected>How would you rate your day on the scale 1 to 10</option>
-                    {% for i in 10|get_range %}
+                    {% for i in 11|get_range %}
                     <option>{{i}}</option>
                     {% endfor %}
                 </select>

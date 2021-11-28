@@ -29,7 +29,7 @@ class Medication(models.Model):
 
 class Sentiment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sentiment", null=True)
-    sentiment = models.IntegerField()
+    sentiment = models.IntegerField(null=True)
     rating = models.PositiveIntegerField(null=True)
     date_created = models.DateTimeField(auto_now_add=True)
 

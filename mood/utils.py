@@ -15,7 +15,7 @@ import base64
 
 # graphs
 import matplotlib.pyplot as plt
-
+import seaborn as sns
 
 # load my encoder
 with open(os.getcwd() + '\encoder', "rb") as f:
@@ -83,7 +83,8 @@ def get_chart(data, chart_type):
     plt.switch_backend('AGG')
     fig = plt.figure(figsize=(8,4))
     if chart_type == 'barplot':
-        plt.bar(data, height=len(data))
+        sns.barplot(x="date_created", y="rating", data=data,
+                    palette="Blues_d")
     elif chart_type == 'lineplot':
         plt.plot(data['date_created'], data['sentiment'], marker='o')
     else:
