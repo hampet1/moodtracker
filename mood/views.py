@@ -155,10 +155,18 @@ def mood_history(request):
         cur_user = User.objects.get(id=user.id)
         all_messages = User.objects.get(username=user)
         form = SearchForm(request.POST or None)
+
+        if request.method == 'POST':
+            date_from = request.POST.get('date_from')
+            date_to = request.POST.get('date_to')
+            chart_type = request.POST.get('chart_type')
+
+            print(f"date from {date_from} date to {date_to} chart_type {chart_type}")
+
         return render(request, "mood/mood_history.html",
                       {
                           "message_history": all_messages.user.all(),
-                          "our_class": Message.objects.get(id=1),
+                          "our_class": Message.objects.get(pk=user.id),
                           "form":form,
                       })
     else:

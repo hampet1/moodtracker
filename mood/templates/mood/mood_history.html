@@ -1,4 +1,5 @@
-{% extends 'mood/layout.html'%}
+{% extends 'mood/base.html'%}
+{% load crispy_forms_tags %}
 
 
 
@@ -19,10 +20,12 @@ ul.no-bullets {
 
 <br>
 <h4> history of {{user}}'s mood</h4><br>
+<h1>graph or table</h1><br><br>
 
-<form action="" method="POST">
+<form action="{% url 'mood_history' %}" method="POST">
     {% csrf_token %}
-    {{form}}
+    {{form | crispy}}
+    <button type="submit">submit</button>
 </form>
 
 <br><br><br>
@@ -38,6 +41,8 @@ ul.no-bullets {
 
 
 <h1>graph or table</h1>
+
+
 
 
 <!-- access using class attribute -->
