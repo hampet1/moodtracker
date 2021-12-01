@@ -87,6 +87,8 @@ def get_chart(data, chart_type):
                     palette="Blues_d")
     elif chart_type == 'lineplot':
         plt.plot(data['date_created'], data['sentiment'], marker='o')
+    elif chart_type == 'count_plot':
+        sns.countplot(x='sentiment', data=data, palette="Set3")
     else:
         return "something went wrong"
     plt.tight_layout()

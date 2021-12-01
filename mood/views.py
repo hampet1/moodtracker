@@ -10,23 +10,20 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from datetime import datetime
 
 # helper funtions - for embedded layer of our model
 from .utils import input_layer, get_chart
 from .forms import SearchForm
+from django.db.models import Q
 
 # python stream manipulation
 from io import BytesIO
 
 import plotly.graph_objects as go
 
-
-
 weights_path = os.getcwd() + '\model.h5'
 model_path = os.getcwd() + '\model.json'
-
-
-
 
 
 @register.filter
@@ -38,12 +35,9 @@ def get_range(value):
 
 
 def index(request):
-
     if request.user.is_authenticated:
         user = request.user
         cur_user = User.objects.get(id=user.id)
-
-
 
         return render(request, "mood/index.html",
                       {
@@ -59,7 +53,6 @@ def index(request):
                           'hello': hello,
 
                       })
-
 
 
 def message(request):
@@ -81,11 +74,7 @@ def message(request):
         else:
             med_type = False
 
-
-
-
         # medication = request.POST['medication']
-
 
         # load json and create model
         json_file = open(model_path, 'r')
@@ -110,9 +99,12 @@ def message(request):
             sentiment = 1
 
         if 'rating' in request.POST:
-            if sentiment is not None:
-                rating = request.POST['rating']
-                Sentiment.objects.create(user=user, sentiment=sentiment, rating=int(rating))
+            try:
+                if sentiment is not None:
+                    rating = request.POST['rating']
+                    Sentiment.objects.create(user=user, sentiment=sentiment, rating=int(rating))
+            except ValueError as e:
+                Sentiment.objects.create(user=user, rating=0)
         else:
             Sentiment.objects.create(user=user, rating=0)
 
@@ -122,7 +114,7 @@ def message(request):
         df_1 = pd.DataFrame(all_sentiment)
 
         # we can bring it to html
-        #df_2 = df_2.to_html()
+        # df_2 = df_2.to_html()
         df_data = pd.DataFrame(all_sentiment.values())
         df_data = df_data.drop(columns='id')
         print("dataframe: ", df_data
@@ -139,7 +131,6 @@ def message(request):
                           # pick possible medication
                           'chart_line': chart_line,
                           'chart_bar': chart_bar,
-                          'hello':hello,
                       })
 
     else:
@@ -150,24 +141,52 @@ def mood_history(request):
     '''
     user - is related_name in our model
     '''
+    chart = None
+    df_result = None
+    no_data = None
     if request.user.is_authenticated:
         user = request.user
         cur_user = User.objects.get(id=user.id)
         all_messages = User.objects.get(username=user)
         form = SearchForm(request.POST or None)
 
+
+        # getting data from Sentiment model
         if request.method == 'POST':
             date_from = request.POST.get('date_from')
             date_to = request.POST.get('date_to')
             chart_type = request.POST.get('chart_type')
+            result = Sentiment.objects \
+                  .filter(user=user.id) \
+                  .filter(date_created__date__lte=date_to, date_created__date__gte=date_from)
+            print(result)
+            # getting values from our database
 
-            print(f"date from {date_from} date to {date_to} chart_type {chart_type}")
+            if len(result) > 0:
+                # using values method because results returns dictionary like object
+                df_result = pd.DataFrame(result.values())
+                df_result = df_result.drop(columns='id')
+                try:
+                    if chart_type == '3':
+                        chart = get_chart(df_result, 'count_plot')
+                except ValueError as e:
+                    print('Value Error')
+
+            else:
+                no_data = True
+
+
+            #chart_line = get_chart(result_data, 'lineplot')
+
+
 
         return render(request, "mood/mood_history.html",
                       {
                           "message_history": all_messages.user.all(),
                           "our_class": Message.objects.get(pk=user.id),
-                          "form":form,
+                          "form": form,
+                          "chart_line": chart,
+                          "no_data": no_data,
                       })
     else:
         pass

@@ -1,9 +1,9 @@
 from django import forms
 
 GRAPH_CHOICES = (
-    ('1', 'line_chart'),
-    ('2', 'bar_chart'),
-    ('3', 'heat_map'),
+    ('1', 'line chart'),
+    ('2', 'bar chart'),
+    ('3', 'count plot'),
 
 )
 

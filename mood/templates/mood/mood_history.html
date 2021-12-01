@@ -21,15 +21,26 @@ ul.no-bullets {
 <br>
 <h4> history of {{user}}'s mood</h4><br>
 <h1>graph or table</h1><br><br>
-
-<form action="{% url 'mood_history' %}" method="POST">
-    {% csrf_token %}
-    {{form | crispy}}
-    <button type="submit">submit</button>
-</form>
+    {% if no_data %}
+        <div class="alert alert-warning" role="alert">
+          No data available, please try different date!
+        </div>
+    {% endif %}
+    <div class="container">
+      <div class="row justify-content-md-center">
+        <div class="col-8">
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{form | crispy}}
+                <button type="submit" class="btn btn-primary mt-3">Search</button>
+            </form>
+        </div>
+      </div>
+    </div>
 
 <br><br><br>
 
+<!--
 <ul class="no-bullets">
     {% for message in message_history %}
     <li> {{message.message}} </li>
@@ -38,21 +49,45 @@ ul.no-bullets {
     <li> no mood history ! </li>
     {% endfor %}
 </ul>
-
-
-<h1>graph or table</h1>
-
+-->
 
 
 
-<!-- access using class attribute -->
+<!-- access using class attribute
 <h1> {{our_class.message}} </h1>
 <div style="background-color:yellow;">
        {{bla|safe}}
 </div>
+-->
+    {% if chart_line %}
+    <img src="data:image/png;base64, {{chart_line|safe}}">
 
-
-<img src="data:image/png;base64, {{chart_line|safe}}">
+    {% endif %}
 <br><br>
-<img src="data:image/png;base64, {{chart_bar|safe}}">
+
+
+
+<script>
+
+
+
+
+/*
+document.addEventListener('DOMContentLoaded', function() {
+            // onsubmit event
+            document.querySelector('form').onsubmit = () =>  {
+                // value getting text out of it
+                    document.querySelector('#warning')
+                    $('#warning').show();
+                // return folse means that we run the request only locally we're not sending it to a server
+                return false;
+            }
+
+	});
+*/
+</script>
+
+
+
+
 {% endblock %}

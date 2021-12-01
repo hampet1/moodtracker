@@ -27,7 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-K_NAME = "JDKSJKDJS"
+
+DATETIME_FORMAT = '%d-%m-%Y %H:%M:%S'
+USE_L10N = False
+
 
 # Application definition
 

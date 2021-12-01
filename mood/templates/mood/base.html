@@ -18,11 +18,14 @@
 <div class="container-fluid">
 	<div id="wrapper">
 	<div class="sidenav">
-		<div class="col-12">
+		<div class="row justify-content-center">
+		<div class="col-10">
+			<h3> Mood Tracker </h3><br>
 			<a href ="{% url 'index' %}"> Home </a>
 			<a href="{% url 'mood_history' %}">My mood history</a>
 			<a href="{% url 'mood_boost' %}">Are you depressed ?</a>
 			<a href="{% url 'logout' %}"> Logout </a>
+			</div>
 			</div>
 		</div>
 
