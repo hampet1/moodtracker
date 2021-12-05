@@ -15,7 +15,6 @@ from datetime import datetime
 # helper funtions - for embedded layer of our model
 from .utils import input_layer, get_chart
 from .forms import SearchForm
-from django.db.models import Q
 
 # python stream manipulation
 from io import BytesIO
@@ -39,20 +38,34 @@ def index(request):
         user = request.user
         cur_user = User.objects.get(id=user.id)
 
+
         return render(request, "mood/index.html",
                       {
                           'user': user.username,
                           # pick possible medication
                           'meds': cur_user.medication.all(),
-
                       })
     else:
-        hello = "djskdjsk"
-        return render(request, "mood/index.html",
-                      {
-                          'hello': hello,
+        print("user is not registered")
 
-                      })
+
+def medication_update(request):
+
+
+    med_name = None
+    med_description = None
+    if request.method == "POST" and request.user.is_authenticated:
+        user = request.user
+        med_name = str(request.POST['med-name-add'])
+        print("med name")
+        # adding medication to the database
+        #todo add if statement for med-description
+        Medication.objects.create(user=user, name_of_medication=med_name)
+        # adding description to the medication
+        med_description = str(request.POST['med-description'])
+        Medication.objects.create(user=user, description=med_description)
+
+    return render(request,"mood/index.html")
 
 
 def message(request):
@@ -61,18 +74,20 @@ def message(request):
     message - is related_name
     request.method == "POST"
     """
-
+    sentiment = None
     chart = None
+    info = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
 
-        cur_user = User.objects.get(id=user.id)
+        #cur_user = User.objects.get(id=user.id)
         message = request.POST['message']
         Message.objects.create(user=user, message=message)
-        if 'med-type' in request.POST:
-            med_type = request.POST['med-type']
-        else:
-            med_type = False
+        print("our medication is: ", request.POST.get('med-name'))
+        print("our medication is: ", request.POST.get('med-name'))
+        # medication
+        # delete this part
+
 
         # medication = request.POST['medication']
 
@@ -89,14 +104,17 @@ def message(request):
         text = input_layer(message)
 
         # predictions
-        pred = (loaded_model.predict(text) > 0.5).astype("int32")
-        print("pred:,", pred)
-        # our model prediction
+        try:
+            pred = (loaded_model.predict(text) > 0.5).astype("int32")
+            print("pred:,", pred)
+            # our model prediction
 
-        if np.average(pred) < 0.5:
-            sentiment = 0
-        else:
-            sentiment = 1
+            if np.average(pred) < 0.5:
+                sentiment = 0
+            else:
+                sentiment = 1
+        except Exception as e:
+            print(f"something went wrong: {e}")
 
         if 'rating' in request.POST:
             try:
@@ -117,17 +135,21 @@ def message(request):
         # df_2 = df_2.to_html()
         df_data = pd.DataFrame(all_sentiment.values())
         df_data = df_data.drop(columns='id')
-        print("dataframe: ", df_data
-              )
-        # chart
-        hello = "hello"
+
+        #medication form
+
+        # checking whether data was processed or not
+        if len(df_data) > 0:
+            info = True
         chart_line = get_chart(df_data, 'lineplot')
         chart_bar = get_chart(df_data, 'barplot')
-        return render(request, "mood/mood_history.html",
+
+        return render(request, "mood/index.html",
                       {
                           'user': user.username,
                           'message': Message.objects.get(pk=user.id),
                           'bla': df_data,
+                          "info": info,
                           # pick possible medication
                           'chart_line': chart_line,
                           'chart_bar': chart_bar,
@@ -148,8 +170,7 @@ def mood_history(request):
         user = request.user
         cur_user = User.objects.get(id=user.id)
         all_messages = User.objects.get(username=user)
-        form = SearchForm(request.POST or None)
-
+        search_form = SearchForm(request.POST or None)
 
         # getting data from Sentiment model
         if request.method == 'POST':
@@ -157,8 +178,8 @@ def mood_history(request):
             date_to = request.POST.get('date_to')
             chart_type = request.POST.get('chart_type')
             result = Sentiment.objects \
-                  .filter(user=user.id) \
-                  .filter(date_created__date__lte=date_to, date_created__date__gte=date_from)
+                .filter(user=user.id) \
+                .filter(date_created__date__lte=date_to, date_created__date__gte=date_from)
             print(result)
             # getting values from our database
 
@@ -175,16 +196,13 @@ def mood_history(request):
             else:
                 no_data = True
 
-
-            #chart_line = get_chart(result_data, 'lineplot')
-
-
+            # chart_line = get_chart(result_data, 'lineplot')
 
         return render(request, "mood/mood_history.html",
                       {
                           "message_history": all_messages.user.all(),
                           "our_class": Message.objects.get(pk=user.id),
-                          "form": form,
+                          "search_form": search_form,
                           "chart_line": chart,
                           "no_data": no_data,
                       })

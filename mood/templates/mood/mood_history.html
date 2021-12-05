@@ -31,7 +31,7 @@ ul.no-bullets {
         <div class="col-8">
             <form action="" method="POST">
                 {% csrf_token %}
-                {{form | crispy}}
+                {{search_form | crispy}}
                 <button type="submit" class="btn btn-primary mt-3">Search</button>
             </form>
         </div>

@@ -18,14 +18,14 @@ class Message(models.Model):
         return f"{self.user},{self.message},{self.date_created}"
 
 class Medication(models.Model):
-    user = models.ManyToManyField(User, blank=True, related_name="medication")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="medication", null=True)
     name_of_medication = models.CharField(max_length=64)
     # black true means that it can be empty
     description = models.TextField(blank=True, null=True)
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return f"{','.join([str(p) for p in self.user.all()])}, {self.name_of_medication}"
+        return f"{self.user}, {self.name_of_medication}, {self.description}"
 
 
 class Sentiment(models.Model):

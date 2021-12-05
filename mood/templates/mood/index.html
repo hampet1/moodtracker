@@ -1,4 +1,5 @@
 {% extends 'mood/base.html'%}
+{% load crispy_forms_tags %}
 
 
 
@@ -7,13 +8,6 @@
 
 <script>
 
-// pop up value in alert message
-document.addEventListener('DOMContentLoaded', ()=>{
-    document.querySelector('form').onsubmit = ()=>{
-        alert(`our message is ${our_text}`);
-    }
-});
-
 // disable submit before filling out input
 document.addEventListener('DOMContentLoaded', ()=>{
     document.querySelector('#submit').disabled = true;
@@ -21,10 +15,29 @@ document.addEventListener('DOMContentLoaded', ()=>{
     document.querySelector('#message').onkeyup = ()=> {
         if(document.querySelector('#message').value.length > 0){
             document.querySelector('#submit').disabled = false;
-        }else {
-            document.querySelector('#submit').disabled = true;
+            }else {
+              document.querySelector('#submit').disabled = true;
         }
    }
+   });
+
+// using DOM manipulation
+document.addEventListener('DOMContentLoaded', ()=> {
+  document.querySelectorAll('#form-control-2').forEach((option)=> {
+    //onclick handler
+    // if you pick add med or del med display pop-up form
+    option.onclick = function() {
+      if(option.value == 'add-medication'){
+        //document.getElementById("submit").disabled = false;
+        document.getElementById("add-med").hidden = false;
+        document.getElementById("del-med").hidden = true;
+      }
+      if (option.value == 'del-medication'){
+        document.getElementById("del-med").hidden = false;
+        document.getElementById("add-med").hidden = true;
+      }
+    }
+  });
 });
 
 
@@ -32,18 +45,96 @@ document.addEventListener('DOMContentLoaded', ()=>{
 </script>
 
 
+
+
+<!-- Modal for adding medication-->
+<div class="modal fade" id="add-medication" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" style="text-align: center;">add medication</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="alert-box"></div>
+        <form id="medication-form" action="{%url 'med'%}" method="POST">
+            {% csrf_token %}
+             <div class="form-group">
+                <div class="input-group-prepend">
+                 </div>
+                    <div class="form-group">
+                     <label for="usr">Name of medication: </label>
+                        <input type="text" class="form-control" id="usr2" name="med-name-add" placeholder="e.g. Serequil (50 mg)">
+                     </div>
+                    <label for="usr">Describe your medication or add any note:</label>
+                        <textarea autofocus class="form-control" aria-label="With textarea" name="med-description" id="medicatioon-delete" placeholder="e.g. I felt a bit light-headed."></textarea>
+                    </div>
+
+
+            <button type="submit" class="btn btn-primary">Add</button>
+      </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal for deleting medication-->
+<div class="modal fade" id="del-medication" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel2" style="text-align: center;">add medication</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="alert-box-del"></div>
+        <form id="medication-form-del" action="{%url 'med'%}" method="POST">
+            {% csrf_token %}
+             <div class="form-group">
+                <div class="input-group-prepend">
+                 </div>
+                    <div class="form-group">
+                     <label for="usr">Name of medication: </label>
+                        <input type="text" class="form-control" id="usr" name="med-name-del" placeholder="e.g. Serequil (50 mg)">
+                     </div>
+                    </div>
+
+
+            <button type="submit" class="btn btn-primary">Delete</button>
+      </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
 <h6> how are you feeling today? please shortly describe your day or your feelings</h6><br>
 <hr>
-<h3> Graph vs Table {{hello}} </h3><br>
-<p>{{hello}}</p>
+{% if info %}
+<div class="alert alert-info" role="alert">
+  Your data was processed successfully!
+</div>
+{% endif %}
 
 <form action=" " method="POST">
     {% csrf_token %}
     {{form}}
-    {{hello}}
 </form>
 
-<br>
 
 
 <form action="{% url 'message'%}", method="post">
@@ -51,20 +142,29 @@ document.addEventListener('DOMContentLoaded', ()=>{
     <div class="input-group">
       <div class="input-group-prepend">
       </div>
-      <textarea autofocus class="form-control" aria-label="With textarea" name="message" id="message"></textarea>
+      <textarea autofocus class="form-control" aria-label="With textarea" name="message" id="message" placeholder="how was your day ?"></textarea>
     </div>
     <br>
 
-
+    <h1> {{message_med}} </h1>
     <div id="content" name="content" class="main">
-		<div class="row justify-content-center">
-			<div class="col-8">
-                <select class="form-control-dm custom-select" name="med-type">
-                  <option selected>What type of medication are you on?</option>
+		<div class="row">
+			<div class="col-10">
+                <select class="form-control-dm custom-select" id="form-control-2" name="med-type">
+                    <option value="" disabled selected hidden>check out or change your medication list</option>
+                  <optgroup label="your current medication">
                   {% for med in request.user.medication.all%}
-                  <option value="{{med.name_of_medication}}">{{med.name_of_medication}}</option>
+                    // to filter only medication not their description
+                    // maybe limit number of medication ???
+                      {% if med.name_of_medication %}
+                  <option value="{{med.name_of_medication}}" placeholder="sad">{{med.name_of_medication}}</option>
+                      {% endif %}
                   {% endfor %}
-                    <option>different medication</option>
+                  </optgroup>
+                    <optgroup label="edit your meds">
+                    <option value="add-medication">add medication</option>
+                    <option value="del-medication">delete medication</option>
+                    </optgroup>
                 </select>
                 <br><br>
                 <select class="form-control-dm custom-select" name="rating">
@@ -79,7 +179,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
         </div>
     </div>
 
-    <button class="btn btn-primary" id="submit" type="submit" onclick="pop()" >Submit</button>
+    <button class="btn btn-primary" id="submit" type="submit"disabled>Submit</button>
+    <button class="btn btn-success" id="add-med" type="button" data-toggle="modal" data-target="#add-medication" hidden> add medication </button>
+    <button class="btn btn-warning" id="del-med" type="button" data-toggle="modal" data-target="#del-medication" hidden> delete medication </button>
 </form>
 
 {% endblock %}
