@@ -10,4 +10,5 @@ urlpatterns = [
     path('mood_history/', views.mood_history, name="mood_history"),
     path('mood_boost/', views.mood_boosts, name="mood_boost"),
     path('med/', views.medication_update, name="med"),
+    path('med_del/', views.medication_delete, name="med_del"),
 ]

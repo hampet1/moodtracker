@@ -48,19 +48,42 @@ def index(request):
     else:
         print("user is not registered")
 
+def medication_delete(request):
+
+    #todo add check if medication is not already in the database
+    #todo make sure there are no duplicates
+    med_name_del = None
+    if request.method == "POST" and request.user.is_authenticated:
+        user = request.user
+        med_name_del = str(request.POST['med-name-del'])
+        print("del: ", med_name_del)
+        del_item = Medication.objects.filter(user=user).filter(name_of_medication=med_name_del)
+        del_item.delete()
+        print("deleted")
+
+        # del item
+    return render(request,"mood/index.html")
+
+
+
+
+
+
 
 def medication_update(request):
 
 
-    med_name = None
+    med_name_add = None
     med_description = None
+
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
-        med_name = str(request.POST['med-name-add'])
-        print("med name")
+        med_name_add = str(request.POST['med-name-add'])
+        print("med name", med_name_add)
         # adding medication to the database
-        #todo add if statement for med-description
-        Medication.objects.create(user=user, name_of_medication=med_name)
+        # todo add check if medication is not already in the database
+        # todo make sure there are no duplicates
+        Medication.objects.create(user=user, name_of_medication=med_name_add)
         # adding description to the medication
         med_description = str(request.POST['med-description'])
         Medication.objects.create(user=user, description=med_description)
