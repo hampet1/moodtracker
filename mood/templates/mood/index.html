@@ -1,48 +1,31 @@
 {% extends 'mood/base.html'%}
 {% load crispy_forms_tags %}
+{% load static %}
 
 
 
-{% block body %}
 
+        {% block scripts %}
+        <script src="{% static 'mood/index.js' %}" defer></script>
 
-<script>
-
-// disable submit before filling out input
-document.addEventListener('DOMContentLoaded', ()=>{
-    document.querySelector('#submit').disabled = true;
-    // onkeyup - means once we lift up our finger
-    document.querySelector('#message').onkeyup = ()=> {
-        if(document.querySelector('#message').value.length > 0){
-            document.querySelector('#submit').disabled = false;
-            }else {
-              document.querySelector('#submit').disabled = true;
-        }
-   }
-   });
-
-// using DOM manipulation
-document.addEventListener('DOMContentLoaded', ()=> {
-  document.querySelectorAll('#form-control-2').forEach((option)=> {
-    //onclick handler
-    // if you pick add med or del med display pop-up form
-    option.onclick = function() {
-      if(option.value == 'add-medication'){
-        //document.getElementById("submit").disabled = false;
-        document.getElementById("add-med").hidden = false;
-        document.getElementById("del-med").hidden = true;
-      }
-      if (option.value == 'del-medication'){
-        document.getElementById("del-med").hidden = false;
-        document.getElementById("add-med").hidden = true;
-      }
-    }
-  });
-});
+        {% endblock %}
 
 
 
-</script>
+    {% block headline %}
+
+<h4> {{ user }}'s mood tracker</h4><br>
+
+    {% endblock %}
+
+
+
+            {% block body %}
+
+            {% block modal %}
+
+
+
 
 
 
@@ -58,7 +41,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
         </button>
       </div>
       <div class="modal-body">
-        <div id="alert-box"></div>
+        <div id="alert-box-add"></div>
         <form id="medication-form" action="{%url 'med'%}" method="POST">
             {% csrf_token %}
              <div class="form-group">
@@ -116,9 +99,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
 </div>
 
 
-
-
-
+                    {% endblock %}
 
 
 
@@ -142,7 +123,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     <div class="input-group">
       <div class="input-group-prepend">
       </div>
-      <textarea autofocus class="form-control" aria-label="With textarea" name="message" id="message" placeholder="how was your day ?"></textarea>
+      <textarea autofocus class="form-control" aria-label="With textarea" name="message" id="message" placeholder="how was your day?"></textarea>
     </div>
     <br>
 

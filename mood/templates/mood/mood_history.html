@@ -7,20 +7,15 @@
 
 
 
-{% block body %}
-<style>
-ul.no-bullets {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-</style>
 
 
-<br>
+    {% block headline %}
+
 <h4> history of {{user}}'s mood</h4><br>
-<h1>graph or table</h1><br><br>
+
+    {% endblock %}
+
+    {% block body %}
     {% if no_data %}
         <div class="alert alert-warning" role="alert">
           No data available, please try different date!

@@ -9,9 +9,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+	<!-- custom js and css -->
     <link href="{% static 'mood/styles.css' %}" rel="stylesheet">
+
+	{% block scripts %}
+
+	{% endblock %}
+
 </head>
 <body>
+
+
 
 
 
@@ -23,21 +33,30 @@
 			<h3> Mood Tracker </h3><br>
 			<a href ="{% url 'index' %}"> Home </a>
 			<a href="{% url 'mood_history' %}">My mood history</a>
-			<a href="{% url 'mood_boost' %}">Are you depressed ?</a>
+			<a href="{% url 'mood_boost' %}">Seek for a mood booster?</a>
 			<a href="{% url 'logout' %}"> Logout </a>
 			</div>
 			</div>
 		</div>
 
 	<div id="content" name="content" class="main">
-		<div class="row justify-content-center">
+		<div class="row justify-content-center mt-5">
 			<div class="col-6">
-				<h1 class="mt-2">Mood tracker</h1>
-				<hr class="mt-0 mb-4">
-				{% block body %}
 
+				{% block headline %}
 
 				{% endblock %}
+
+				<hr class="mt-0 mb-4">
+
+				{% block body %}
+
+				{% block modal %}
+
+				{% endblock %}
+
+				{% endblock %}
+
 			</div>
 		</div>
 	</div>

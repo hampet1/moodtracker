@@ -41,7 +41,6 @@ def index(request):
 
         return render(request, "mood/index.html",
                       {
-                          'user': user.username,
                           # pick possible medication
                           'meds': cur_user.medication.all(),
                       })
@@ -169,7 +168,6 @@ def message(request):
 
         return render(request, "mood/index.html",
                       {
-                          'user': user.username,
                           'message': Message.objects.get(pk=user.id),
                           'bla': df_data,
                           "info": info,
@@ -197,6 +195,7 @@ def mood_history(request):
 
         # getting data from Sentiment model
         if request.method == 'POST':
+            # using get cause it's dictionary
             date_from = request.POST.get('date_from')
             date_to = request.POST.get('date_to')
             chart_type = request.POST.get('chart_type')
