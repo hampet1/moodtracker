@@ -82,12 +82,15 @@ def get_graph():
 def get_chart(data, chart_type):
     plt.switch_backend('AGG')
     fig = plt.figure(figsize=(8,4))
-    if chart_type == 'barplot':
+    if chart_type == 'bar_plot':
+        plt.title("your day rating")
         sns.barplot(x="date_created", y="rating", data=data,
                     palette="Blues_d")
-    elif chart_type == 'lineplot':
+    elif chart_type == 'line_plot':
+        plt.title("mood determined based on your mood description")
         plt.plot(data['date_created'], data['sentiment'], marker='o')
     elif chart_type == 'count_plot':
+        plt.title("sum of possitive and negative dayes")
         sns.countplot(x='sentiment', data=data, palette="Set3")
     else:
         return "something went wrong"

@@ -33,4 +33,22 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
 
 // alert messages
-const ALERT_BOX_ADD = document.getElementById("alert-box-add")
+//const ALERT_BOX_ADD = document.getElementById("alert-box-add");
+//const ALERT_BOX_DEL = document.getElementById("alert-box-del")
+
+
+/*
+$.ajax({
+    type: 'POST',
+    url: '',
+    data: formData,
+    success: function(response){
+        console.log(response);
+    },
+    error: function(error){
+        console.log(error);
+    }
+})
+
+// create a function to handle alerts
+*/

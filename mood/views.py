@@ -65,10 +65,6 @@ def medication_delete(request):
 
 
 
-
-
-
-
 def medication_update(request):
 
 
@@ -101,17 +97,8 @@ def message(request):
     info = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
-
-        #cur_user = User.objects.get(id=user.id)
         message = request.POST['message']
         Message.objects.create(user=user, message=message)
-        print("our medication is: ", request.POST.get('med-name'))
-        print("our medication is: ", request.POST.get('med-name'))
-        # medication
-        # delete this part
-
-
-        # medication = request.POST['medication']
 
         # load json and create model
         json_file = open(model_path, 'r')
@@ -120,7 +107,6 @@ def message(request):
         loaded_model = model_from_json(loaded_model_json)
         # load weights into new model
         loaded_model.load_weights(weights_path)
-
         # evaluate loaded model on test data
         loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         text = input_layer(message)
@@ -138,6 +124,7 @@ def message(request):
         except Exception as e:
             print(f"something went wrong: {e}")
 
+        # rating
         if 'rating' in request.POST:
             try:
                 if sentiment is not None:
@@ -158,22 +145,10 @@ def message(request):
         df_data = pd.DataFrame(all_sentiment.values())
         df_data = df_data.drop(columns='id')
 
-        #medication form
-
-        # checking whether data was processed or not
-        if len(df_data) > 0:
-            info = True
-        chart_line = get_chart(df_data, 'lineplot')
-        chart_bar = get_chart(df_data, 'barplot')
-
         return render(request, "mood/index.html",
                       {
                           'message': Message.objects.get(pk=user.id),
-                          'bla': df_data,
                           "info": info,
-                          # pick possible medication
-                          'chart_line': chart_line,
-                          'chart_bar': chart_bar,
                       })
 
     else:
@@ -183,9 +158,14 @@ def message(request):
 def mood_history(request):
     '''
     user - is related_name in our model
+    displaying charts and tables
     '''
-    chart = None
+
+    count_plot = None
+    line_plot = None
+    bar_plot = None
     df_result = None
+    table = None
     no_data = None
     if request.user.is_authenticated:
         user = request.user
@@ -199,6 +179,7 @@ def mood_history(request):
             date_from = request.POST.get('date_from')
             date_to = request.POST.get('date_to')
             chart_type = request.POST.get('chart_type')
+            display_type = request.POST.get('display_choice')
             result = Sentiment.objects \
                 .filter(user=user.id) \
                 .filter(date_created__date__lte=date_to, date_created__date__gte=date_from)
@@ -210,8 +191,13 @@ def mood_history(request):
                 df_result = pd.DataFrame(result.values())
                 df_result = df_result.drop(columns='id')
                 try:
-                    if chart_type == '3':
-                        chart = get_chart(df_result, 'count_plot')
+                    if display_type == '1':
+                        count_plot = get_chart(df_result, 'count_plot')
+                        line_plot = get_chart(df_result, 'line_plot')
+                        bar_plot = get_chart(df_result, 'bar_plot')
+                    if display_type == '2':
+                        table = df_result.to_html()
+                        pass
                 except ValueError as e:
                     print('Value Error')
 
@@ -222,10 +208,13 @@ def mood_history(request):
 
         return render(request, "mood/mood_history.html",
                       {
-                          "message_history": all_messages.user.all(),
+                          "message_history": all_messages.message.all(),
                           "our_class": Message.objects.get(pk=user.id),
                           "search_form": search_form,
-                          "chart_line": chart,
+                          "count_plot": count_plot,
+                          "line_plot": line_plot,
+                          "bar_plot": bar_plot,
+                          "table":table,
                           "no_data": no_data,
                       })
     else:

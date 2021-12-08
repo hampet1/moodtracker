@@ -1,12 +1,27 @@
+
+
+.logo-sm {
+    height: 45px;
+    width: auto;
+}
+
 #wrapper {
     width: 100%;
     overflow: hidden;
     margin: auto;
-    background-color:yellow;
+    background-color: #f0f2f5;
+    padding-top: 5%;
+    text-align:center;
+
+}
+
+#my-nav {
+    background-color:#EE4C7C !important;
 
 }
 
 
+/*
 .sidenav {
     height:200%;
     width:20%;
@@ -18,16 +33,16 @@
     overflow-x: :hidden;
     padding-top:20px;
 }
-
+*/
 
 #content {
-    width:120%;
-    background-color:white;
+    width:100%;
+    background-color:#f0f2f5 !important;
     float:left;
     margin:auto;
 
 }
-
+/*
 .sidenav a {
     padding:6px 8px 6px 16px;
     text-decoration: none;
@@ -35,17 +50,19 @@
     color: #818181;
     display:block;
 }
+*/
 
 .sidenav a:hover{
     color:#f1f1f1;
 }
 
+/*
 .main{
     margin-left:60px;
     padding: 0px 10px;
     text-align:center;
 }
-
+*/
 
 ul.no-bullets {
   list-style-type: none;

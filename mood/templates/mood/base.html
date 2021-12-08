@@ -23,31 +23,52 @@
 
 
 
+{% load static %}
+<nav id = "my-nav" class="navbar navbar-expand-lg navbar-light bg-primary p-3 font-weight-bold">
+  <div class="container-fluid">
+    <a class="navbar-brand" href=""><img src="{% static 'logo.png' %}" class="logo-sm"></a>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'index' %}">home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'mood_history' %}">My mood history</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'mood_boost' %}">Seek for a mood booster?</a>
+        </li>
+      </ul>
+    </div>
+    {% if request.user.is_authenticated %}
+        <div class="nav-item dropdown btn-sm mr-5">
+          <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{request.user}}
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+          </div>
+        </div>
+
+    {% endif %}
+  </div>
+</nav>
+
+
 
 
 <div class="container-fluid">
 	<div id="wrapper">
-	<div class="sidenav">
-		<div class="row justify-content-center">
-		<div class="col-10">
-			<h3> Mood Tracker </h3><br>
-			<a href ="{% url 'index' %}"> Home </a>
-			<a href="{% url 'mood_history' %}">My mood history</a>
-			<a href="{% url 'mood_boost' %}">Seek for a mood booster?</a>
-			<a href="{% url 'logout' %}"> Logout </a>
-			</div>
-			</div>
-		</div>
 
-	<div id="content" name="content" class="main">
-		<div class="row justify-content-center mt-5">
-			<div class="col-6">
+		<div class="row justify-content-center mt-8" style="background-color: #f0f2f5">
+			<div class="col-8">
 
 				{% block headline %}
 
 				{% endblock %}
 
-				<hr class="mt-0 mb-4">
+				<div class="mt-0 mb-4">
 
 				{% block body %}
 
@@ -56,6 +77,15 @@
 				{% endblock %}
 
 				{% endblock %}
+
+
+				<table class="table">
+  					<thead class="thead-dark">
+					{% block table %}
+
+					{% endblock %}
+					</thead>
+				</table>
 
 			</div>
 		</div>
