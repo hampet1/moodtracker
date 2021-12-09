@@ -17,6 +17,11 @@ import base64
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# df to pdf export
+from matplotlib.backends.backend_pdf import PdfPages
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+
 # load my encoder
 with open(os.getcwd() + '\encoder', "rb") as f:
     one_hot = pickle.load(f)
@@ -97,3 +102,46 @@ def get_chart(data, chart_type):
     plt.tight_layout()
     chart = get_graph()
     return chart
+
+
+
+def export_pdf(df_data):
+    """
+    export table to pdf
+
+    """
+    fig, ax =plt.subplots(figsize=(12,4))
+    ax.axis('tight')
+    ax.axis('off')
+    the_table = ax.table(cellText=df_data.values,colLabels=df_data.columns,loc='center')
+    # Create the HttpResponse object with the appropriate PDF headers.
+    return the_table
+
+
+
+
+def some_view(df_data):
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+
+    buffer = BytesIO()
+
+
+    # Create the PDF object, using the BytesIO object as its "file."
+    p = canvas.Canvas(buffer)
+    # calling another function
+    df_data = export_pdf(df_data)
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    p.drawString(100, 100, df_data)
+
+    # Close the PDF object cleanly.
+    p.showPage()
+    p.save()
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    return response

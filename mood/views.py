@@ -14,13 +14,14 @@ import pandas as pd
 from datetime import datetime
 
 # helper funtions - for embedded layer of our model
-from .utils import input_layer, get_chart
+from .utils import input_layer, get_chart, some_view
 from .forms import SearchForm
 
 # python stream manipulation
 from io import BytesIO
 
 import plotly.graph_objects as go
+
 
 weights_path = os.getcwd() + '\model.h5'
 model_path = os.getcwd() + '\model.json'
@@ -201,7 +202,10 @@ def mood_history_result(request):
     bar_plot = None
     df_result = None
     table = None
+    download = None
     no_data = None
+    date_from = None
+    date_to = None
     table_data = []
     if request.user.is_authenticated:
         user = request.user
@@ -237,16 +241,27 @@ def mood_history_result(request):
                             temp = df_result.iloc[i]
                             table_data.append(dict(temp))
 
+
                 except ValueError as e:
                     no_data = True
 
             else:
                 no_data = True
 
+
+           # download = str(request.POST.get('download'))
+            #if download == 'download':
+            #    return some_view(df_result)
+            #else:
+            #    print("something went wrong")
             # chart_line = get_chart(result_data, 'lineplot')
 
+        # download pdf
+        print("final table data is", table_data)
         return render(request, "mood/results.html",
                       {
+                          "date_from": date_from,
+                          "date_to": date_to,
                           "count_plot": count_plot,
                           "line_plot": line_plot,
                           "bar_plot": bar_plot,
@@ -267,3 +282,5 @@ def logout(request):
 
 def mood_boosts(request):
     return render(request, "mood/mood_boost.html")
+
+
