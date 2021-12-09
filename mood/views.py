@@ -3,6 +3,7 @@ from keras.models import model_from_json
 from .models import Message, Medication, Sentiment
 from django.contrib.auth.models import User
 from django.template.defaulttags import register
+
 # keras model manipulation
 from keras.models import model_from_json
 # other packages
@@ -86,6 +87,13 @@ def medication_update(request):
     return render(request,"mood/index.html")
 
 
+
+
+
+
+
+
+
 def message(request):
     """
     pk and id is the same thing
@@ -155,6 +163,12 @@ def message(request):
         return render(request, 'users/login.html')
 
 
+
+
+
+
+
+
 def mood_history(request):
     '''
     user - is related_name in our model
@@ -167,11 +181,32 @@ def mood_history(request):
     df_result = None
     table = None
     no_data = None
+    table_data = []
     if request.user.is_authenticated:
         user = request.user
         cur_user = User.objects.get(id=user.id)
         all_messages = User.objects.get(username=user)
         search_form = SearchForm(request.POST or None)
+
+        return render(request, "mood/mood_history.html",
+                      {
+                          "search_form": search_form,
+                      })
+    else:
+        print("you're not registered")
+
+def mood_history_result(request):
+    count_plot = None
+    line_plot = None
+    bar_plot = None
+    df_result = None
+    table = None
+    no_data = None
+    table_data = []
+    if request.user.is_authenticated:
+        user = request.user
+        cur_user = User.objects.get(id=user.id)
+        all_messages = User.objects.get(username=user)
 
         # getting data from Sentiment model
         if request.method == 'POST':
@@ -183,7 +218,7 @@ def mood_history(request):
             result = Sentiment.objects \
                 .filter(user=user.id) \
                 .filter(date_created__date__lte=date_to, date_created__date__gte=date_from)
-            print(result)
+            print("resutl is", result)
             # getting values from our database
 
             if len(result) > 0:
@@ -196,25 +231,26 @@ def mood_history(request):
                         line_plot = get_chart(df_result, 'line_plot')
                         bar_plot = get_chart(df_result, 'bar_plot')
                     if display_type == '2':
-                        table = df_result.to_html()
-                        pass
+
+                        table_data = []
+                        for i in range(df_result.shape[0]):
+                            temp = df_result.iloc[i]
+                            table_data.append(dict(temp))
+
                 except ValueError as e:
-                    print('Value Error')
+                    no_data = True
 
             else:
                 no_data = True
 
             # chart_line = get_chart(result_data, 'lineplot')
 
-        return render(request, "mood/mood_history.html",
+        return render(request, "mood/results.html",
                       {
-                          "message_history": all_messages.message.all(),
-                          "our_class": Message.objects.get(pk=user.id),
-                          "search_form": search_form,
                           "count_plot": count_plot,
                           "line_plot": line_plot,
                           "bar_plot": bar_plot,
-                          "table":table,
+                          "table": table_data,
                           "no_data": no_data,
                       })
     else:

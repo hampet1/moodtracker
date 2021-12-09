@@ -131,6 +131,13 @@
     <div id="content" name="content" class="main">
 		<div class="row d-flex justify-content-center">
 			<div class="col-10">
+                <select class="form-control-dm custom-select" name="rating">
+                  <option selected>How would you rate your day on the scale 1 to 10</option>
+                    {% for i in 11|get_range %}
+                    <option>{{i}}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
                 <select class="form-control-dm custom-select" id="form-control-2" name="med-type">
                     <option value="" disabled selected hidden>check out or change your medication list</option>
                   <optgroup label="your current medication">
@@ -146,13 +153,6 @@
                     <option value="add-medication">add medication</option>
                     <option value="del-medication">delete medication</option>
                     </optgroup>
-                </select>
-                <br><br>
-                <select class="form-control-dm custom-select" name="rating">
-                  <option selected>How would you rate your day on the scale 1 to 10</option>
-                    {% for i in 11|get_range %}
-                    <option>{{i}}</option>
-                    {% endfor %}
                 </select>
                 <br><br>
             </div>

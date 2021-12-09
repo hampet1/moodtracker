@@ -1,0 +1,86 @@
+{% extends 'mood/base.html'%}
+{% load crispy_forms_tags %}
+
+
+
+
+
+
+
+
+
+    {% block headline %}
+
+<h4 xmlns="http://www.w3.org/1999/html"> history of {{request.user}}'s mood</h4><br>
+
+    {% endblock %}
+
+    {% block body %}
+    {% if no_data %}
+        <div class="alert alert-warning" role="alert">
+          No data available, please try different date!
+        </div>
+    {% endif %}
+
+
+<!--
+<ul class="no-bullets">
+    {% for message in message_history %}
+    <li> {{message.message}} </li>
+    <li> {{message.data_created}} </li>
+    {% empty %}
+    <li> no mood history ! </li>
+    {% endfor %}
+</ul>
+-->
+
+
+
+<!-- access using class attribute
+<h1> {{our_class.message}} </h1>
+<div style="background-color:yellow;">
+       {{bla|safe}}
+</div>
+-->
+    {% if line_plot %}
+    <img src="data:image/png;base64, {{line_plot|safe}}">
+
+    {% endif %}
+
+    <br>
+    {% if count_plot %}
+    <img src="data:image/png;base64, {{count_plot|safe}}">
+
+    {% endif %}
+
+    <br>
+    {% if bar_plot %}
+    <img src="data:image/png;base64, {{bar_plot|safe}}">
+
+    {% endif %}
+
+    {% block table %}
+
+    {% if table %}
+
+        <table class="table table-dark">
+            <thead class="thead-dark">
+            <tr>
+                <th>first</th>
+                <th>second</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in table%}
+            <tr>
+                <td>{{i.sentiment}}</td>
+                <td>{{i.date_created}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% endif %}
+        {% endblock %}
+        {% endblock %}
+
