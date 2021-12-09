@@ -55,13 +55,13 @@ body {
 
 #form {
     background-color:transparent;
-    width: 45%;
+    width: 50%;
     margin: auto;
-    margin-top: 2%;
-    padding: 2%;
+    margin-top: 1%;
+    padding: 1%;
     border-radius: 20px;
     float:right;
-    margin-top: -5%;
+    margin-top: -10%;
     margin-bottom: 15%;
     clear: both;
     border: 1.5px solid black;

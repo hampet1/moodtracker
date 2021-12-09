@@ -2,35 +2,19 @@
 {% load crispy_forms_tags %}
 
 {% block form %}
-<div id="form">
-    <h2>Sign up</h2>
-    <br>
-<form method="post">
+
+
+<div id="form" style="background-color:#f0f2f5 !important;">
+    <h2>Sign up form</h2><br>
+  <form method="post">
   {% csrf_token %}
-  {% for field in form %}
-    <div class="col-auto">
-
-
-      {{ field.label_tag }}<br>
-      {{ field }} <br>
-      {% if field.help_text %}
-
-      {% endif %}
-      {% for error in field.errors %}
+      {{form|crispy}}
       <br>
-        <p class="p-2 mb-2 bg-warning text-dark">{{ error }}</p>
-      {% endfor %}
-    </div>
-
-    </p>
-  {% endfor %}
-  <br>
-  <button type="submit" class="btn btn-success">Sign up</button>
-    </form>
-        <hr>
-      </br>
+      <button type="submit" class="btn btn-success">Sign up</button><br><hr>
         <a class="btn btn-primary" href="{% url 'login' %}" role="button"> login </a>
+   </form>
     </div>
+    <br>
 
     {% endblock %}
 
