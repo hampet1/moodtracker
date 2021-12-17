@@ -14,14 +14,13 @@ import pandas as pd
 from datetime import datetime
 
 # helper funtions - for embedded layer of our model
-from .utils import input_layer, get_chart, some_view
+from .utils import input_layer, get_chart, df_to_excell, adjust_time
 from .forms import SearchForm
 
 # python stream manipulation
 from io import BytesIO
 
 import plotly.graph_objects as go
-
 
 weights_path = os.getcwd() + '\model.h5'
 model_path = os.getcwd() + '\model.json'
@@ -40,7 +39,6 @@ def index(request):
         user = request.user
         cur_user = User.objects.get(id=user.id)
 
-
         return render(request, "mood/index.html",
                       {
                           # pick possible medication
@@ -49,10 +47,10 @@ def index(request):
     else:
         print("user is not registered")
 
-def medication_delete(request):
 
-    #todo add check if medication is not already in the database
-    #todo make sure there are no duplicates
+def medication_delete(request):
+    # todo add check if medication is not already in the database
+    # todo make sure there are no duplicates
     med_name_del = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
@@ -63,13 +61,10 @@ def medication_delete(request):
         print("deleted")
 
         # del item
-    return render(request,"mood/index.html")
-
+    return render(request, "mood/index.html")
 
 
 def medication_update(request):
-
-
     med_name_add = None
     med_description = None
 
@@ -85,14 +80,7 @@ def medication_update(request):
         med_description = str(request.POST['med-description'])
         Medication.objects.create(user=user, description=med_description)
 
-    return render(request,"mood/index.html")
-
-
-
-
-
-
-
+    return render(request, "mood/index.html")
 
 
 def message(request):
@@ -104,11 +92,9 @@ def message(request):
     sentiment = None
     chart = None
     info = None
+    message = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
-        message = request.POST['message']
-        Message.objects.create(user=user, message=message)
-
         # load json and create model
         json_file = open(model_path, 'r')
         loaded_model_json = json_file.read()
@@ -116,6 +102,9 @@ def message(request):
         loaded_model = model_from_json(loaded_model_json)
         # load weights into new model
         loaded_model.load_weights(weights_path)
+        # our input message
+        message = request.POST['message']
+        Message.objects.create(user=user, message=message)
         # evaluate loaded model on test data
         loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         text = input_layer(message)
@@ -139,6 +128,8 @@ def message(request):
                 if sentiment is not None:
                     rating = request.POST['rating']
                     Sentiment.objects.create(user=user, sentiment=sentiment, rating=int(rating))
+                    Message.objects.create(user=user, message=message)
+                    info = True
             except ValueError as e:
                 Sentiment.objects.create(user=user, rating=0)
         else:
@@ -162,12 +153,6 @@ def message(request):
 
     else:
         return render(request, 'users/login.html')
-
-
-
-
-
-
 
 
 def mood_history(request):
@@ -196,6 +181,7 @@ def mood_history(request):
     else:
         print("you're not registered")
 
+
 def mood_history_result(request):
     count_plot = None
     line_plot = None
@@ -207,9 +193,10 @@ def mood_history_result(request):
     date_from = None
     date_to = None
     table_data = []
+    table_data_sent = []
+    table_data_mess = []
     if request.user.is_authenticated:
         user = request.user
-        cur_user = User.objects.get(id=user.id)
         all_messages = User.objects.get(username=user)
 
         # getting data from Sentiment model
@@ -227,8 +214,9 @@ def mood_history_result(request):
 
             if len(result) > 0:
                 # using values method because results returns dictionary like object
-                df_result = pd.DataFrame(result.values())
-                df_result = df_result.drop(columns='id')
+                df_res_sent = pd.DataFrame(result.values())
+                df_res_sent = df_res_sent.drop(columns='id')
+
                 try:
                     if display_type == '1':
                         count_plot = get_chart(df_result, 'count_plot')
@@ -236,25 +224,31 @@ def mood_history_result(request):
                         bar_plot = get_chart(df_result, 'bar_plot')
                     if display_type == '2':
 
-                        table_data = []
-                        for i in range(df_result.shape[0]):
-                            temp = df_result.iloc[i]
-                            table_data.append(dict(temp))
+                        # store into sessions - used for excel export
+                        df_for_session = df_res_sent
+                        print("this one is working")
+                        df_for_session['date_created'] = df_for_session['date_created'].astype(str)
+                        dict_obj = df_for_session.to_dict('list')
+                        request.session['data'] = dict_obj
+                        # adjusting time
+                        df_res_sent['index'] = df_res_sent.index
+                        df_res_sent['rating'] = df_res_sent['rating'].apply(lambda x: x if (x != 0) else 'nan')
+                        df_res_sent = adjust_time(df_res_sent)
+
+                        for i in range(df_res_sent.shape[0]):
+                            temp = df_res_sent.iloc[i]
+                            table_data_sent.append(dict(temp))
 
 
                 except ValueError as e:
                     no_data = True
 
-            else:
-                no_data = True
-
-
-           # download = str(request.POST.get('download'))
-            #if download == 'download':
-            #    return some_view(df_result)
-            #else:
-            #    print("something went wrong")
-            # chart_line = get_chart(result_data, 'lineplot')
+        # download = str(request.POST.get('download'))
+        # if download == 'download':
+        #    return some_view(df_result)
+        # else:
+        #    print("something went wrong")
+        # chart_line = get_chart(result_data, 'lineplot')
 
         # download pdf
         print("final table data is", table_data)
@@ -265,7 +259,7 @@ def mood_history_result(request):
                           "count_plot": count_plot,
                           "line_plot": line_plot,
                           "bar_plot": bar_plot,
-                          "table": table_data,
+                          "table_sentiment": table_data_sent,
                           "no_data": no_data,
                       })
     else:
@@ -284,3 +278,32 @@ def mood_boosts(request):
     return render(request, "mood/mood_boost.html")
 
 
+def download_pdf(request):
+    """
+    download dataframe as xlsx
+    """
+
+    if request.user.is_authenticated:
+        print("something is happening")
+        # getting data from Sentiment model
+
+        if request.method == 'POST':
+            try:
+                if request.POST['download_csv']:
+                    my_session = request.session['data']
+                    my_df = pd.DataFrame(my_session)
+                    my_df['date_created'] = pd.to_datetime(my_df['date_created'], format='%Y%m%d%H%M%S',
+                                                           errors='ignore')
+                    # adjusting time
+                    my_df = adjust_time(my_df)
+                    csv_file = df_to_excell(request, my_df)
+                    return csv_file
+                else:
+                    print("something went wrong")
+
+            except Exception as e:
+                print(f"the problem is {e}")
+
+
+def guideline(request):
+    return render(request, 'mood/guideline.html')

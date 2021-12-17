@@ -4,10 +4,10 @@ import os
 import pickle
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
-#from tensorflow.keras.preprocessing.text import one_hot
+# from tensorflow.keras.preprocessing.text import one_hot
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-#from tensorflow.random import set_seed
-#set_seed(1)
+# from tensorflow.random import set_seed
+# set_seed(1)
 
 # for creating streams (file-like objects)
 from io import BytesIO
@@ -47,13 +47,14 @@ def preprocessing(data):
 
 def vectorize_sentence(corpus):
     # Vocabulary size
-    voc_size=10000
-    onehot_repr=[one_hot(words,voc_size)for words in corpus]
+    voc_size = 10000
+    onehot_repr = [one_hot(words, voc_size) for words in corpus]
     # creating embedding layer as the input layer for our model we fixed lenght set to 20
-    sent_length=35
+    sent_length = 35
     # pad sequence - we have to always input vector of the same size, but sentences are of
-    embedded_words=pad_sequences(onehot_repr,padding='pre',maxlen=sent_length)
+    embedded_words = pad_sequences(onehot_repr, padding='pre', maxlen=sent_length)
     return embedded_words
+
 
 def input_layer(data):
     corpus = preprocessing(data)
@@ -86,7 +87,7 @@ def get_graph():
 
 def get_chart(data, chart_type):
     plt.switch_backend('AGG')
-    fig = plt.figure(figsize=(8,4))
+    fig = plt.figure(figsize=(8, 4))
     if chart_type == 'bar_plot':
         plt.title("your day rating")
         sns.barplot(x="date_created", y="rating", data=data,
@@ -103,45 +104,45 @@ def get_chart(data, chart_type):
     chart = get_graph()
     return chart
 
-
-
+'''
 def export_pdf(df_data):
     """
     export table to pdf
 
     """
-    fig, ax =plt.subplots(figsize=(12,4))
+    fig, ax = plt.subplots(figsize=(12, 4))
     ax.axis('tight')
     ax.axis('off')
-    the_table = ax.table(cellText=df_data.values,colLabels=df_data.columns,loc='center')
+    the_table = ax.table(cellText=df_data.values, colLabels=df_data.columns, loc='center')
     # Create the HttpResponse object with the appropriate PDF headers.
     return the_table
 
+'''
+import pandas as pd
 
 
+def df_to_excell(request, df):
+    # The easiest way to create a binary stream is with open() with 'b' in the mode string
+    with BytesIO() as b:
+        # Use the StringIO object as the filehandle.
+        writer = pd.ExcelWriter(b, engine='xlsxwriter')
+        df.to_excel(writer, sheet_name='Sheet1')
+        writer.save()
+        # Set up the Http response.
+        filename = 'my_mood.xlsx'
+        response = HttpResponse(
+            b.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        # attachment means to download
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
-def some_view(df_data):
-    # Create the HttpResponse object with the appropriate PDF headers.
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
-
-    buffer = BytesIO()
-
-
-    # Create the PDF object, using the BytesIO object as its "file."
-    p = canvas.Canvas(buffer)
-    # calling another function
-    df_data = export_pdf(df_data)
-    # Draw things on the PDF. Here's where the PDF generation happens.
-    # See the ReportLab documentation for the full list of functionality.
-    p.drawString(100, 100, df_data)
-
-    # Close the PDF object cleanly.
-    p.showPage()
-    p.save()
-
-    # Get the value of the BytesIO buffer and write it to the response.
-    pdf = buffer.getvalue()
-    buffer.close()
-    response.write(pdf)
     return response
+
+
+def adjust_time(df):
+    """
+    getting rid of microseconds in our pandas dataframe
+    """
+    for i in range(df.shape[0]):
+        df['date_created'].loc[i] = df['date_created'].iloc[i].split('.')[0]
+    return df
