@@ -144,5 +144,5 @@ def adjust_time(df):
     getting rid of microseconds in our pandas dataframe
     """
     for i in range(df.shape[0]):
-        df['date_created'].loc[i] = df['date_created'].iloc[i].split('.')[0]
+        df['date_created'].loc[i] = df['date_created'].loc[i].split('.')[0]
     return df

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from keras.models import model_from_json
-from .models import Message, Medication, Sentiment
+from .models import Sentiment, Medication
 from django.contrib.auth.models import User
 from django.template.defaulttags import register
 
@@ -103,11 +103,11 @@ def message(request):
         # load weights into new model
         loaded_model.load_weights(weights_path)
         # our input message
-        message = request.POST['message']
-        Message.objects.create(user=user, message=message)
+        message_input = request.POST['message']
+
         # evaluate loaded model on test data
         loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-        text = input_layer(message)
+        text = input_layer(message_input)
 
         # predictions
         try:
@@ -127,8 +127,7 @@ def message(request):
             try:
                 if sentiment is not None:
                     rating = request.POST['rating']
-                    Sentiment.objects.create(user=user, sentiment=sentiment, rating=int(rating))
-                    Message.objects.create(user=user, message=message)
+                    Sentiment.objects.create(user=user, message=message_input, sentiment=sentiment, rating=int(rating))
                     info = True
             except ValueError as e:
                 Sentiment.objects.create(user=user, rating=0)
@@ -147,7 +146,7 @@ def message(request):
 
         return render(request, "mood/index.html",
                       {
-                          'message': Message.objects.get(pk=user.id),
+                          'message': Sentiment.objects.get(pk=user.id),
                           "info": info,
                       })
 
@@ -219,9 +218,9 @@ def mood_history_result(request):
 
                 try:
                     if display_type == '1':
-                        count_plot = get_chart(df_result, 'count_plot')
-                        line_plot = get_chart(df_result, 'line_plot')
-                        bar_plot = get_chart(df_result, 'bar_plot')
+                        count_plot = get_chart(df_res_sent, 'count_plot')
+                        line_plot = get_chart(df_res_sent, 'line_plot')
+                        bar_plot = get_chart(df_res_sent, 'bar_plot')
                     if display_type == '2':
 
                         # store into sessions - used for excel export

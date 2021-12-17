@@ -39,6 +39,9 @@
         <li class="nav-item">
           <a class="nav-link {% if request.path == '/home/mood_boost/'%} active {% endif %}" href="{% url 'mood_boost' %}">Seek for a mood booster?</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/home/guideline/'%} active {% endif %}" href="{% url 'guideline' %}">Guideline</a>
+        </li>
       </ul>
     </div>
     {% if request.user.is_authenticated %}
