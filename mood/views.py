@@ -193,7 +193,7 @@ def mood_history_result(request):
     date_to = None
     table_data = []
     table_data_sent = []
-    table_data_mess = []
+    table_medication = []
     if request.user.is_authenticated:
         user = request.user
         all_messages = User.objects.get(username=user)
@@ -208,13 +208,20 @@ def mood_history_result(request):
             result = Sentiment.objects \
                 .filter(user=user.id) \
                 .filter(date_created__date__lte=date_to, date_created__date__gte=date_from)
-            print("resutl is", result)
-            # getting values from our database
 
+            result_medication = Medication.objects \
+                .filter(user=user.id) \
+                .filter(date_created__date__lte=date_to, date_created__date__gte=date_from)
+
+            print("result medication is: ", result_medication)
             if len(result) > 0:
                 # using values method because results returns dictionary like object
                 df_res_sent = pd.DataFrame(result.values())
                 df_res_sent = df_res_sent.drop(columns='id')
+
+            if len(result_medication) > 0:
+                df_med = pd.DataFrame(result_medication.values())
+                df_med = df_med.drop(columns='id')
 
                 try:
                     if display_type == '1':
@@ -229,28 +236,26 @@ def mood_history_result(request):
                         df_for_session['date_created'] = df_for_session['date_created'].astype(str)
                         dict_obj = df_for_session.to_dict('list')
                         request.session['data'] = dict_obj
-                        # adjusting time
+                        # adjusting time for sentiment table
                         df_res_sent['index'] = df_res_sent.index
                         df_res_sent['rating'] = df_res_sent['rating'].apply(lambda x: x if (x != 0) else 'nan')
                         df_res_sent = adjust_time(df_res_sent)
 
+                        # adjusting time for medication table
+                        df_med['index'] = df_med.index
+                        # creating list for displaying sentiment table
+                        print("df med is: ", df_med)
                         for i in range(df_res_sent.shape[0]):
                             temp = df_res_sent.iloc[i]
                             table_data_sent.append(dict(temp))
 
-
+                        # creating list for displaying medication table
+                        for i in range(df_med.shape[0]):
+                            temp = df_med.iloc[i]
+                            table_medication.append(dict(temp))
                 except ValueError as e:
                     no_data = True
 
-        # download = str(request.POST.get('download'))
-        # if download == 'download':
-        #    return some_view(df_result)
-        # else:
-        #    print("something went wrong")
-        # chart_line = get_chart(result_data, 'lineplot')
-
-        # download pdf
-        print("final table data is", table_data)
         return render(request, "mood/results.html",
                       {
                           "date_from": date_from,
@@ -259,6 +264,7 @@ def mood_history_result(request):
                           "line_plot": line_plot,
                           "bar_plot": bar_plot,
                           "table_sentiment": table_data_sent,
+                          "table_medication": table_medication,
                           "no_data": no_data,
                       })
     else:
