@@ -2,6 +2,7 @@
 // enable submit button after filling out the textarea field
 document.addEventListener('DOMContentLoaded', ()=>{
     document.querySelector('#submit').disabled = true;
+    document.querySelector('#submit-med').disabled = true;
     document.querySelector('#message').onkeyup = ()=> {
         if(document.querySelector('#message').value.length > 0){
             document.querySelector('#submit').disabled = false;
@@ -9,7 +10,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
               document.querySelector('#submit').disabled = true;
         }
    }
+   document.querySelector('#med-name').onkeyup = ()=> {
+        if(document.querySelector('#med-name').value.length > 0){
+            document.querySelector('#submit-med').disabled = false;
+            }else {
+              document.querySelector('#submit-med').disabled = true;
+        }
+    }
    });
+
+
 
 
 // show or hide buttons for add and delete medication
@@ -30,6 +40,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
     }
   });
 });
+
+
+
+
 
 
 // alert messages

@@ -30,6 +30,8 @@
 
 
 
+
+
 <!-- Modal for adding medication-->
 <div class="modal fade" id="add-medication" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -49,14 +51,14 @@
                  </div>
                     <div class="form-group">
                      <label for="usr">Name of medication: </label>
-                        <input type="text" class="form-control" id="usr2" name="med-name-add" placeholder="e.g. Serequil (50 mg)">
+                        <input type="text" class="form-control" id="med-name" name="med-name-add" placeholder="e.g. Serequil (50 mg)">
                      </div>
                     <label for="usr">Describe your medication or add any note:</label>
                         <textarea autofocus class="form-control" aria-label="With textarea" name="med-description" id="medicatioon-delete" placeholder="e.g. I felt a bit light-headed."></textarea>
                     </div>
 
 
-            <button type="submit" class="btn btn-primary">Add</button>
+            <button type="submit" class="btn btn-primary" id="submit-med" disabled>Add</button>
       </form>
       </div>
 

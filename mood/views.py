@@ -75,10 +75,8 @@ def medication_update(request):
         # adding medication to the database
         # todo add check if medication is not already in the database
         # todo make sure there are no duplicates
-        Medication.objects.create(user=user, name_of_medication=med_name_add)
-        # adding description to the medication
         med_description = str(request.POST['med-description'])
-        Medication.objects.create(user=user, description=med_description)
+        Medication.objects.create(user=user, name_of_medication=med_name_add, description=med_description)
 
     return render(request, "mood/index.html")
 
@@ -192,6 +190,7 @@ def mood_history_result(request):
     date_from = None
     date_to = None
     table_data = []
+    df_sent = None
     table_data_sent = []
     table_medication = []
     if request.user.is_authenticated:
@@ -216,8 +215,8 @@ def mood_history_result(request):
             print("result medication is: ", result_medication)
             if len(result) > 0:
                 # using values method because results returns dictionary like object
-                df_res_sent = pd.DataFrame(result.values())
-                df_res_sent = df_res_sent.drop(columns='id')
+                df_sent = pd.DataFrame(result.values())
+                df_sent = df_sent.drop(columns='id')
 
             if len(result_medication) > 0:
                 df_med = pd.DataFrame(result_medication.values())
@@ -225,34 +224,36 @@ def mood_history_result(request):
 
                 try:
                     if display_type == '1':
-                        count_plot = get_chart(df_res_sent, 'count_plot')
-                        line_plot = get_chart(df_res_sent, 'line_plot')
-                        bar_plot = get_chart(df_res_sent, 'bar_plot')
+                        count_plot = get_chart(df_sent, 'count_plot')
+                        line_plot = get_chart(df_sent, 'line_plot')
+                        bar_plot = get_chart(df_sent, 'bar_plot')
                     if display_type == '2':
 
                         # store into sessions - used for excel export
-                        df_for_session = df_res_sent
+                        df_for_session = df_sent
                         print("this one is working")
                         df_for_session['date_created'] = df_for_session['date_created'].astype(str)
                         dict_obj = df_for_session.to_dict('list')
                         request.session['data'] = dict_obj
                         # adjusting time for sentiment table
-                        df_res_sent['index'] = df_res_sent.index
-                        df_res_sent['rating'] = df_res_sent['rating'].apply(lambda x: x if (x != 0) else 'nan')
-                        df_res_sent = adjust_time(df_res_sent)
+                        df_sent['index'] = df_sent.index + 1
+                        df_sent['rating'] = df_sent['rating'].apply(lambda x: x if (x != 0) else 'nan')
+                        df_sent = adjust_time(df_sent)
 
                         # adjusting time for medication table
-                        df_med['index'] = df_med.index
+                        df_med['index'] = df_med.index + 1
+                        df_med['description'] = df_med['description'].apply(lambda x: x if (x != '') else 'nan')
                         # creating list for displaying sentiment table
                         print("df med is: ", df_med)
-                        for i in range(df_res_sent.shape[0]):
-                            temp = df_res_sent.iloc[i]
+                        for i in range(df_sent.shape[0]):
+                            temp = df_sent.iloc[i]
                             table_data_sent.append(dict(temp))
 
                         # creating list for displaying medication table
                         for i in range(df_med.shape[0]):
                             temp = df_med.iloc[i]
                             table_medication.append(dict(temp))
+
                 except ValueError as e:
                     no_data = True
 
