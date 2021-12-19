@@ -42,6 +42,16 @@ document.addEventListener('DOMContentLoaded', ()=> {
 });
 
 
+// turning the warning off after 5 second
+$(document).ready(function() {
+    // show the alert
+    setTimeout(function() {
+        $("#med-alert").alert('close');
+        $("#med-info").alert('close');
+        $('#data-processed-info').alert('close');
+        $('#med-not-found').alert('close');
+    }, 5000);
+});
 
 
 

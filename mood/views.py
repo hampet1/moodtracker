@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from keras.models import model_from_json
-from .models import Sentiment, Medication
+from .models import Sentiment, Medication, DeletedMedication
 from django.contrib.auth.models import User
 from django.template.defaulttags import register
 
@@ -51,23 +51,44 @@ def index(request):
 def medication_delete(request):
     # todo add check if medication is not already in the database
     # todo make sure there are no duplicates
-    med_name_del = None
+    del_item = None
+    del_reason = None
+    info_med_del = None
+    item_not_found = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
         med_name_del = str(request.POST['med-name-del'])
-        print("del: ", med_name_del)
+        del_reason = str(request.POST.get('med-del-reason'))
+        # store deleted item to keep track of them
+
         del_item = Medication.objects.filter(user=user).filter(name_of_medication=med_name_del)
+        print("item to delete is: ", del_item.exists())
+        print("type: ", type(del_item))
+        if del_item.exists():
+            if del_reason:
+                DeletedMedication.objects.create(user=user, name_of_medication=med_name_del, reason=del_reason)
+            else:
+                DeletedMedication.objects.create(user=user, name_of_medication=med_name_del)
+            info_med_del = True
+            del_item.delete()
+            # delete the record from database
+        else:
+            item_not_found = True
+
         del_item.delete()
-        print("deleted")
+
 
         # del item
-    return render(request, "mood/index.html")
+    return render(request, "mood/index.html", {
+                    'info_med_del': info_med_del,
+                    'item_not_found': item_not_found
+                        })
 
 
 def medication_update(request):
     med_name_add = None
     med_description = None
-
+    info_med = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
         med_name_add = str(request.POST['med-name-add'])
@@ -77,8 +98,8 @@ def medication_update(request):
         # todo make sure there are no duplicates
         med_description = str(request.POST['med-description'])
         Medication.objects.create(user=user, name_of_medication=med_name_add, description=med_description)
-
-    return render(request, "mood/index.html")
+        info_med = True
+    return render(request, "mood/index.html", {'info_med':info_med})
 
 
 def message(request):

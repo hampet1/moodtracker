@@ -54,7 +54,7 @@
                         <input type="text" class="form-control" id="med-name" name="med-name-add" placeholder="e.g. Serequil (50 mg)">
                      </div>
                     <label for="usr">Describe your medication or add any note:</label>
-                        <textarea autofocus class="form-control" aria-label="With textarea" name="med-description" id="medicatioon-delete" placeholder="e.g. I felt a bit light-headed."></textarea>
+                        <textarea autofocus class="form-control" aria-label="With textarea" name="med-description" id="med-delete" placeholder="e.g. I felt a bit light-headed."></textarea>
                     </div>
 
 
@@ -89,8 +89,9 @@
                      <label for="usr">Name of medication: </label>
                         <input type="text" class="form-control" id="usr" name="med-name-del" placeholder="e.g. Serequil (50 mg)">
                      </div>
+                    <label for="usr">Describe your medication or add any note:</label>
+                        <textarea autofocus class="form-control" aria-label="With textarea" name="med-description" id="medicatioon-delete" placeholder="e.g. I felt a bit light-headed."></textarea>
                     </div>
-
 
             <button type="submit" class="btn btn-primary">Delete</button>
       </form>
@@ -104,14 +105,32 @@
                     {% endblock %}
 
 
-
 <h6> how are you feeling today? please shortly describe your day or your feelings</h6><br>
 <hr>
 {% if info %}
-<div class="alert alert-info" role="alert">
+<div id="data-processed-info" class="alert alert-info" role="alert">
   Your data was processed successfully!
 </div>
 {% endif %}
+
+{% if info_med %}
+<div id="med-info" class="alert alert-info" role="alert">
+  Your medication was add successfully!
+</div>
+{% endif %}
+
+{% if info_med_del %}
+<div id="med-alert" class="alert alert-info" role="alert">
+  Your medication was deleted successfully!
+</div>
+{% endif %}
+
+{% if item_not_found %}
+<div id="med-not-found" class="alert alert-danger" role="alert">
+  You did not enter correct name, try it again!
+</div>
+{% endif %}
+
 
 <form action=" " method="POST">
     {% csrf_token %}

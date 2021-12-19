@@ -31,3 +31,13 @@ class Medication(models.Model):
     def __str__(self):
         return f"{self.user}, {self.name_of_medication}, {self.description}"
 
+
+class DeletedMedication(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="medication_delete", null=True)
+    name_of_medication = models.CharField(max_length=64)
+    # black true means that it can be empty
+    reason = models.TextField(null=True, blank=True)
+    date_deleted = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return f"{self.user}, {self.name_of_medication}, {self.reason}, {self.date_deleted}"
