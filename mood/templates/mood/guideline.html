@@ -4,18 +4,17 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
-<body>
 
-</body>
+<body>
 {% extends 'mood/base.html'%}
 
 
 
-    {% block headline %}
+{% block headline %}
 
 <h4> How to approach this app</h4><br>
 
-    {% endblock %}
+{% endblock %}
 
 
 
@@ -23,6 +22,10 @@
 {% block body %}
 
 <h6>max length of our message is 280 characters</h6>
+<h6> allowed just one rating a day </h6>
 
-{% endblock %}
+    {% endblock %}
+
+
+</body>
 </html>

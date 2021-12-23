@@ -1,6 +1,6 @@
 from django import forms
 from .models import Medication
-
+from django.contrib.admin.widgets import AdminDateWidget
 
 '''
 GRAPH_CHOICES = (
@@ -16,7 +16,7 @@ DISPLAY_CHOICES = (
 )
 
 
-
+# todo change the date - day first
 class SearchForm(forms.Form):
     date_from = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     date_to = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))

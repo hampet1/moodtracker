@@ -14,7 +14,7 @@ import pandas as pd
 from datetime import datetime
 
 # helper funtions - for embedded layer of our model
-from .utils import input_layer, get_chart, df_to_excell, adjust_time
+from .utils import input_layer, get_chart, df_to_excell, adjust_time, today_date
 from .forms import SearchForm
 
 # python stream manipulation
@@ -49,8 +49,6 @@ def index(request):
 
 
 def medication_delete(request):
-    # todo add check if medication is not already in the database
-    # todo make sure there are no duplicates
     del_item = None
     del_reason = None
     info_med_del = None
@@ -62,8 +60,7 @@ def medication_delete(request):
         # store deleted item to keep track of them
 
         del_item = Medication.objects.filter(user=user).filter(name_of_medication=med_name_del)
-        print("item to delete is: ", del_item.exists())
-        print("type: ", type(del_item))
+
         if del_item.exists():
             if del_reason:
                 DeletedMedication.objects.create(user=user, name_of_medication=med_name_del, reason=del_reason)
@@ -77,29 +74,33 @@ def medication_delete(request):
 
         del_item.delete()
 
-
         # del item
     return render(request, "mood/index.html", {
-                    'info_med_del': info_med_del,
-                    'item_not_found': item_not_found
-                        })
+        'info_med_del': info_med_del,
+        'item_not_found': item_not_found
+    })
 
 
 def medication_update(request):
     med_name_add = None
     med_description = None
     info_med = None
+    info_med_duplicate = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
         med_name_add = str(request.POST['med-name-add'])
         print("med name", med_name_add)
         # adding medication to the database
-        # todo add check if medication is not already in the database
-        # todo make sure there are no duplicates
         med_description = str(request.POST['med-description'])
-        Medication.objects.create(user=user, name_of_medication=med_name_add, description=med_description)
-        info_med = True
-    return render(request, "mood/index.html", {'info_med':info_med})
+        # make sure there are no duplicates
+        duplicate_check = Medication.objects.filter(user=user, name_of_medication=med_name_add)
+        if duplicate_check.exists():
+            info_med_duplicate = True
+        else:
+            Medication.objects.create(user=user, name_of_medication=med_name_add, description=med_description)
+            info_med = True
+    return render(request, "mood/index.html", {'info_med': info_med,
+                                               'info_med_duplicate': info_med_duplicate})
 
 
 def message(request):
@@ -111,7 +112,9 @@ def message(request):
     sentiment = None
     chart = None
     info = None
+    date_today = None
     message = None
+    info_posted = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
         # load json and create model
@@ -124,49 +127,56 @@ def message(request):
         # our input message
         message_input = request.POST['message']
 
-        # evaluate loaded model on test data
-        loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-        text = input_layer(message_input)
+        # check if we already posted our daily mood and rating
+        date_today = today_date()
+        any_message = Sentiment.objects.filter(user=1).filter(date_created__date=date_today)
 
-        # predictions
-        try:
-            pred = (loaded_model.predict(text) > 0.5).astype("int32")
-            print("pred:,", pred)
-            # our model prediction
-
-            if np.average(pred) < 0.5:
-                sentiment = 0
-            else:
-                sentiment = 1
-        except Exception as e:
-            print(f"something went wrong: {e}")
-
-        # rating
-        if 'rating' in request.POST:
-            try:
-                if sentiment is not None:
-                    rating = request.POST['rating']
-                    Sentiment.objects.create(user=user, message=message_input, sentiment=sentiment, rating=int(rating))
-                    info = True
-            except ValueError as e:
-                Sentiment.objects.create(user=user, rating=0)
+        if any_message.exists():
+            info_posted = True
         else:
-            Sentiment.objects.create(user=user, rating=0)
+            # evaluate loaded model on test data
+            loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+            text = input_layer(message_input)
 
-        all_sentiment = Sentiment.objects.filter(user=user)
+            # predictions
+            try:
+                pred = (loaded_model.predict(text) > 0.5).astype("int32")
+                print("pred:,", pred)
+                # our model prediction
 
-        # it's easier to work with dataframe
-        df_1 = pd.DataFrame(all_sentiment)
+                if np.average(pred) < 0.5:
+                    sentiment = 0
+                else:
+                    sentiment = 1
+            except Exception as e:
+                print(f"something went wrong: {e}")
 
-        # we can bring it to html
-        # df_2 = df_2.to_html()
-        df_data = pd.DataFrame(all_sentiment.values())
-        df_data = df_data.drop(columns='id')
+            if 'rating' in request.POST:
+                try:
+                    if sentiment is not None:
+                        rating = request.POST['rating']
+                        Sentiment.objects.create(user=user, message=message_input, sentiment=sentiment, rating=int(rating))
+                        info = True
+                except ValueError as e:
+                    Sentiment.objects.create(user=user, rating=0)
+            else:
+                Sentiment.objects.create(user=user, rating=0)
+
+            all_sentiment = Sentiment.objects.filter(user=user)
+
+            # it's easier to work with dataframe
+            df_1 = pd.DataFrame(all_sentiment)
+
+            # we can bring it to html
+            # df_2 = df_2.to_html()
+            df_data = pd.DataFrame(all_sentiment.values())
+            df_data = df_data.drop(columns='id')
 
         return render(request, "mood/index.html",
                       {
                           'message': Sentiment.objects.get(pk=user.id),
                           "info": info,
+                          "info_posted": info_posted,
                       })
 
     else:
@@ -201,16 +211,13 @@ def mood_history(request):
 
 
 def mood_history_result(request):
+    plots = None
     count_plot = None
     line_plot = None
     bar_plot = None
-    df_result = None
-    table = None
-    download = None
     no_data = None
     date_from = None
     date_to = None
-    table_data = []
     df_sent = None
     table_data_sent = []
     table_medication = []
@@ -221,6 +228,7 @@ def mood_history_result(request):
         # getting data from Sentiment model
         if request.method == 'POST':
             # using get cause it's dictionary
+            # todo fix date day-month-year
             date_from = request.POST.get('date_from')
             date_to = request.POST.get('date_to')
             chart_type = request.POST.get('chart_type')
@@ -248,6 +256,7 @@ def mood_history_result(request):
                         count_plot = get_chart(df_sent, 'count_plot')
                         line_plot = get_chart(df_sent, 'line_plot')
                         bar_plot = get_chart(df_sent, 'bar_plot')
+                        plots = True
                     if display_type == '2':
 
                         # store into sessions - used for excel export
@@ -258,12 +267,13 @@ def mood_history_result(request):
                         request.session['data'] = dict_obj
                         # adjusting time for sentiment table
                         df_sent['index'] = df_sent.index + 1
-                        df_sent['rating'] = df_sent['rating'].apply(lambda x: x if (x != 0) else 'nan')
+                        df_sent['rating'] = df_sent['rating'].apply(lambda x: x if (x != 0) else 'no record')
+                        df_sent['sentiment'] = df_sent['sentiment'].apply(lambda x: x if (x in [0, 1]) else 'no record')
                         df_sent = adjust_time(df_sent)
 
                         # adjusting time for medication table
                         df_med['index'] = df_med.index + 1
-                        df_med['description'] = df_med['description'].apply(lambda x: x if (x != '') else 'nan')
+                        df_med['description'] = df_med['description'].apply(lambda x: x if (x != '') else 'no record')
                         # creating list for displaying sentiment table
                         print("df med is: ", df_med)
                         for i in range(df_sent.shape[0]):
@@ -288,6 +298,7 @@ def mood_history_result(request):
                           "table_sentiment": table_data_sent,
                           "table_medication": table_medication,
                           "no_data": no_data,
+                          "plots":plots,
                       })
     else:
         pass

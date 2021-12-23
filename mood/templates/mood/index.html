@@ -50,10 +50,10 @@
                 <div class="input-group-prepend">
                  </div>
                     <div class="form-group">
-                     <label for="usr">Name of medication: </label>
+                     <label for="med-name">Name of medication: </label>
                         <input type="text" class="form-control" id="med-name" name="med-name-add" placeholder="e.g. Serequil (50 mg)">
                      </div>
-                    <label for="usr">Describe your medication or add any note:</label>
+                    <label for="med-delete">Describe your medication or add any note:</label>
                         <textarea autofocus class="form-control" aria-label="With textarea" name="med-description" id="med-delete" placeholder="e.g. I felt a bit light-headed."></textarea>
                     </div>
 
@@ -86,14 +86,14 @@
                 <div class="input-group-prepend">
                  </div>
                     <div class="form-group">
-                     <label for="usr">Name of medication: </label>
-                        <input type="text" class="form-control" id="usr" name="med-name-del" placeholder="e.g. Serequil (50 mg)">
+                     <label for="med-name">Name of medication: </label>
+                        <input type="text" class="form-control" id="med-del-name" name="med-name-del" placeholder="e.g. Serequil (50 mg)">
                      </div>
-                    <label for="usr">Describe your medication or add any note:</label>
-                        <textarea autofocus class="form-control" aria-label="With textarea" name="med-description" id="medicatioon-delete" placeholder="e.g. I felt a bit light-headed."></textarea>
+                    <label for="med-del">Describe your medication or add any note</label>
+                        <textarea autofocus class="form-control" aria-label="With textarea" name="med-description" id="med-del" placeholder="e.g. I felt a bit light-headed."></textarea>
                     </div>
 
-            <button type="submit" class="btn btn-primary">Delete</button>
+            <button type="submit" id="delete-med-submit" class="btn btn-primary" disabled>Delete</button>
       </form>
       </div>
 
@@ -115,8 +115,15 @@
 
 {% if info_med %}
 <div id="med-info" class="alert alert-info" role="alert">
-  Your medication was add successfully!
+  Your medication was added successfully!
 </div>
+{% endif %}
+
+{% if info_med_duplicate %}
+<div id="med-info-dupl" class="alert alert-danger" role="alert">
+  Your medication had already been added!
+</div>
+
 {% endif %}
 
 {% if info_med_del %}
@@ -127,9 +134,16 @@
 
 {% if item_not_found %}
 <div id="med-not-found" class="alert alert-danger" role="alert">
-  You did not enter correct name, try it again!
+  You did not enter correct medication, try it again!
 </div>
 {% endif %}
+
+{% if info_posted %}
+<div id="info-posted" class="alert alert-danger" role="alert">
+  You have already conducted your daily report!
+</div>
+{% endif %}
+
 
 
 <form action=" " method="POST">

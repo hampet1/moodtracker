@@ -22,6 +22,9 @@ from matplotlib.backends.backend_pdf import PdfPages
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 
+# time
+from datetime import datetime
+
 # load my encoder
 with open(os.getcwd() + '\encoder', "rb") as f:
     one_hot = pickle.load(f)
@@ -88,16 +91,29 @@ def get_graph():
 def get_chart(data, chart_type):
     plt.switch_backend('AGG')
     fig = plt.figure(figsize=(8, 4))
+    # turn into datetime format
+    data['date_created'] = pd.to_datetime(data['date_created'])
+    data['date_created'] = data['date_created'].dt.date
+    data = data.set_index('date_created')
+    print("data is ", data)
+    #data = data.resample("W").sum()
+    print("resample data", data)
+    #print(type(data['date_created']))
+
+    # set time as the index
+    #data.set_index('date_created', inplace=True)
+
     if chart_type == 'bar_plot':
         plt.title("your day rating")
-        sns.barplot(x="date_created", y="rating", data=data,
+        sns.barplot(x=data.index, y="rating", data=data,
                     palette="Blues_d")
     elif chart_type == 'line_plot':
         plt.title("mood determined based on your mood description")
-        plt.plot(data['date_created'], data['sentiment'], marker='o')
+        plt.plot(data['sentiment'], marker='o')
     elif chart_type == 'count_plot':
-        plt.title("sum of possitive and negative dayes")
-        sns.countplot(x='sentiment', data=data, palette="Set3")
+        plt.title("your day rating")
+        sns.barplot(x=data.index, y="sentiment", data=data,
+                    palette="Blues_d")
     else:
         return "something went wrong"
     plt.tight_layout()
@@ -146,3 +162,8 @@ def adjust_time(df):
     for i in range(df.shape[0]):
         df['date_created'].loc[i] = df['date_created'].loc[i].split('.')[0]
     return df
+
+
+def today_date():
+    time_now = datetime.now()
+    return datetime.strftime(time_now, '%Y-%m-%d')

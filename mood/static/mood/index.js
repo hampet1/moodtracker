@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
               document.querySelector('#submit-med').disabled = true;
         }
     }
+    document.querySelector('#med-del-name').onkeyup = ()=> {
+        if(document.querySelector('#med-del-name').value.length > 0){
+            document.querySelector('#delete-med-submit').disabled = false;
+            }else {
+              document.querySelector('#delete-med-submit').disabled = true;
+        }
+    }
    });
 
 
@@ -42,7 +49,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
 });
 
 
-// turning the warning off after 5 second
+
+// turning the warning off after 8 second
 $(document).ready(function() {
     // show the alert
     setTimeout(function() {
@@ -50,7 +58,8 @@ $(document).ready(function() {
         $("#med-info").alert('close');
         $('#data-processed-info').alert('close');
         $('#med-not-found').alert('close');
-    }, 5000);
+        $('#info-posted').alert('close');
+    }, 8000);
 });
 
 
