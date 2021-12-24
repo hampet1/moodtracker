@@ -3,6 +3,7 @@ from keras.models import model_from_json
 from .models import Sentiment, Medication, DeletedMedication
 from django.contrib.auth.models import User
 from django.template.defaulttags import register
+from django.http import HttpResponse
 
 # keras model manipulation
 from keras.models import model_from_json
@@ -45,7 +46,8 @@ def index(request):
                           'meds': cur_user.medication.all(),
                       })
     else:
-        print("user is not registered")
+        return render(request, "mood/error.html")
+
 
 
 def medication_delete(request):
