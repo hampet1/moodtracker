@@ -68,11 +68,10 @@
 
 
 
-
+<div id="wrapper">
 <div class="container-fluid">
-	<div id="wrapper">
 
-		<div class="row justify-content-center mt-8" style="background-color: #f0f2f5">
+		<div class="row justify-content-center mt-3 mb-5 pb-5" style="background-color: #ffffff">
 			<div class="col-8">
 
 				{% block headline %}
@@ -96,16 +95,44 @@
 
 
 </div>
-    <footer class="bg-dark text-white pt-5 pb-4 ">
+
+    <footer class="bg-white text-dark pt-1 pb-3" style="background-color: #f0f2f5 !important;">
         <div class="container text-center text-md-left">
             <div class="row text-center text-md-left">
-                <div class="col-md-3 col-lg-3 col-xl-3 max-auto mt-3">
-                <p>djaslkjdlkasjdkljaslkdjaskljdlkas</p><br>
-                <p> dksfjlksdjflkjsdlkfjsdk </p>
+                <div class="col-md-5 col-lg-5 col-xl-5 max-auto mt-4">
+                <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'logo.png' %}" class="logo-sm">&nbsp Mood Tracker</a>
+                <p>Designed and built with all the love in the world to help people with challenging mental condition. <h6>Disclaimer: neural network model for sentiment analysis is just a prototype with not optimal accuracy, please keep it in mind! </h6>
+
+                </div>
+                <div class="col-md-4 col-lg-3 col-xl-3 mt-4 pt-3 pl-5 ml-3">
+                <h5 class="text">Links</h5>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                      <a class="nav-link {% if request.path == '/'%} active {% endif %}" href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link {% if request.path == '/home/mood_history/'%} active {% endif %}" href="{% url 'mood_history' %}">My mood history</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link {% if request.path == '/home/mood_boost/'%} active {% endif %}" href="{% url 'mood_boost' %}">Seek for a mood booster?</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link {% if request.path == '/home/guideline/'%} active {% endif %}" href="{% url 'guideline' %}">Guideline</a>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="col-md-3 col-lg-3 col-xl-3 max-auto mt-4 pt-3 ">
+                    <h5 class="text">Contact</h5>
+                    <p>phone: 0484845902</p>
+                    <p>email: hamrozipetr@outlook.com</p>
+                </div>
+
                 </div>
              </div>
-        </div>
     </footer>
+        </div>
+
 
 
 

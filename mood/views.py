@@ -46,7 +46,7 @@ def index(request):
                           'meds': cur_user.medication.all(),
                       })
     else:
-        return render(request, "mood/error.html")
+        return render(request, "mood/error404.html")
 
 
 
@@ -77,10 +77,10 @@ def medication_delete(request):
         del_item.delete()
 
         # del item
-    return render(request, "mood/index.html", {
-        'info_med_del': info_med_del,
-        'item_not_found': item_not_found
-    })
+        return render(request, "mood/index.html", {
+            'info_med_del': info_med_del,
+            'item_not_found': item_not_found
+        })
 
 
 def medication_update(request):
@@ -182,7 +182,7 @@ def message(request):
                       })
 
     else:
-        return render(request, 'users/login.html')
+        return render(request, "mood/error404.html")
 
 
 def mood_history(request):
@@ -209,7 +209,7 @@ def mood_history(request):
                           "search_form": search_form,
                       })
     else:
-        print("you're not registered")
+        return render(request, "mood/error404.html")
 
 
 def mood_history_result(request):
@@ -303,7 +303,7 @@ def mood_history_result(request):
                           "plots":plots,
                       })
     else:
-        pass
+        return render(request, "mood/error404.html")
 
 
 def logout(request):
@@ -343,7 +343,12 @@ def download_pdf(request):
 
             except Exception as e:
                 print(f"the problem is {e}")
+    else:
+        return render(request, "mood/error404.html")
 
 
 def guideline(request):
-    return render(request, 'mood/guideline.html')
+    if request.user.is_authenticated:
+        return render(request, 'mood/guideline.html')
+    else:
+        return render(request, "mood/error404.html")
