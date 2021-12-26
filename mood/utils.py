@@ -16,6 +16,9 @@ import base64
 # graphs
 import matplotlib.pyplot as plt
 import seaborn as sns
+import plotly.express as px
+from plotly.offline import plot
+import plotly.graph_objs as go
 
 # df to pdf export
 from matplotlib.backends.backend_pdf import PdfPages
@@ -89,34 +92,35 @@ def get_graph():
 
 
 def get_chart(data, chart_type):
+    print("graph is working")
     plt.switch_backend('AGG')
     fig = plt.figure(figsize=(8, 4))
     # turn into datetime format
     data['date_created'] = pd.to_datetime(data['date_created'])
     data['date_created'] = data['date_created'].dt.date
     data = data.set_index('date_created')
-    print("data is ", data)
-    #data = data.resample("W").sum()
-    print("resample data", data)
-    #print(type(data['date_created']))
 
-    # set time as the index
-    #data.set_index('date_created', inplace=True)
+
 
     if chart_type == 'bar_plot':
         plt.title("your day rating")
-        sns.barplot(x=data.index, y="rating", data=data,
-                    palette="Blues_d")
-    elif chart_type == 'line_plot':
-        plt.title("mood determined based on your mood description")
-        plt.plot(data['sentiment'], marker='o')
-    elif chart_type == 'count_plot':
+        sns.barplot(x=data.index, y="sentiment", data=data,
+                    palette="Blues_d", ci=None)
+    elif chart_type == 'bar_plot_2':
         plt.title("your day rating")
         sns.barplot(x=data.index, y="sentiment", data=data,
-                    palette="Blues_d")
+                    palette="Blues_d", ci=None)
+    elif chart_type == 'line_plot':
+        plt.title("sentiment based on your day description")
+        plt.plot(data['sentiment'], marker='o')
+    elif chart_type == 'count_plot':
+        data['sentiment'] = data['sentiment'].apply(lambda x: 'negative' if (x == 0) else 'positive')
+        plt.title("total sum of your sentiment based on your day description")
+        sns.countplot(x="sentiment",data=data, palette="magma")
     else:
         return "something went wrong"
     plt.tight_layout()
+    # this one is needed for rendering the plot
     chart = get_graph()
     return chart
 
@@ -167,3 +171,54 @@ def adjust_time(df):
 def today_date():
     time_now = datetime.now()
     return datetime.strftime(time_now, '%Y-%m-%d')
+
+
+def demo_plot_view(request):
+    """
+    View demonstrating how to display a graph object
+    on a web page with Plotly.
+    """
+
+    # Generating some data for plots.
+    x = [i for i in range(-10, 11)]
+    y1 = [3 * i for i in x]
+    y2 = [i ** 2 for i in x]
+    y3 = [10 * abs(i) for i in x]
+
+    # List of graph objects for figure.
+    # Each object will contain on series of data.
+    graphs = []
+
+    # Adding linear plot of y1 vs. x.
+    graphs.append(
+        go.Scatter(x=x, y=y1, mode='lines', name='Line y1')
+    )
+
+    # Adding scatter plot of y2 vs. x.
+    # Size of markers defined by y2 value.
+    graphs.append(
+        go.Scatter(x=x, y=y2, mode='markers', opacity=0.8,
+                   marker_size=y2, name='Scatter y2')
+    )
+
+    # Adding bar plot of y3 vs x.
+    graphs.append(
+        go.Bar(x=x, y=y3, name='Bar y3')
+    )
+
+    # Setting layout of the figure.
+    layout = {
+        'title': 'trying plotly',
+        'xaxis_title': 'X',
+        'yaxis_title': 'Y',
+        'height': 620,
+        'width': 860,
+    }
+
+    config = {'responsive': True}
+    # Getting HTML needed to render the plot.
+    plot_div = plot({'data': graphs, 'layout': layout},
+                    output_type='div')
+
+    return plot_div
+

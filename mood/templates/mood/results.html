@@ -38,8 +38,13 @@
 -->
     {% if plots %}
 
-    {% if line_plot %}
-    <img src="data:image/png;base64, {{line_plot|safe}}">
+    {% if bar_plot %}
+    <img src="data:image/png;base64, {{bar_plot|safe}}">
+
+    {% endif %}
+
+    {% if bar_plot_2 %}
+    <img src="data:image/png;base64, {{bar_plot|safe}}">
 
     {% endif %}
 
@@ -48,10 +53,17 @@
 
     {% endif %}
 
-    {% if bar_plot %}
-    <img src="data:image/png;base64, {{bar_plot|safe}}">
+    {% if line_plot %}
+    <img src="data:image/png;base64, {{line_plot|safe}}">
 
     {% endif %}
+
+    {% if plotly_graph %}
+    <img src="data:image/png;base64, {{plotly_graph|safe}}">
+
+    {% endif %}
+
+
     <div class="button-space mb-5 mt-5">
         <!-- use in case of downloading pdf -->
         <form action="{% url 'download_pdf' %}" method="POST">
@@ -87,7 +99,7 @@
             </tbody>
         </table><br><br>
 
-<h5 style="color:#eb0e0e;"> {{request.user}}'s mood description between {{date_from}} and {{date_to}} associated with above displayed ratings</h5>
+<h5> {{request.user}}'s mood description between {{date_from}} and {{date_to}} associated with above displayed ratings</h5>
         <table class="table table-dark table-bordered mt-5">
             <thead class="thead-dark">
             <tr>
@@ -109,7 +121,7 @@
             </tbody>
         </table><br>
 
-<h5 style="color:#eb0e0e;"> {{request.user}}'s medication update from {{date_from}} to {{date_to}}</h5>
+<h5> {{request.user}}'s medication update from {{date_from}} to {{date_to}}</h5>
         <table class="table table-dark table-bordered mt-5">
             <thead class="thead-dark">
             <tr>
