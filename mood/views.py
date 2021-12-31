@@ -15,7 +15,7 @@ import pandas as pd
 from datetime import datetime
 
 # helper funtions - for embedded layer of our model
-from .utils import input_layer, get_chart, df_to_excell, adjust_time, today_date, demo_plot_view
+from .utils import input_layer, get_chart, df_to_excell, adjust_time, today_date, demo_plot_view, check_medication
 from .forms import SearchForm
 
 # python stream manipulation
@@ -49,60 +49,6 @@ def index(request):
         return render(request, "mood/error404.html")
 
 
-
-def medication_delete(request):
-    del_item = None
-    del_reason = None
-    info_med_del = None
-    item_not_found = None
-    if request.method == "POST" and request.user.is_authenticated:
-        user = request.user
-        med_name_del = str(request.POST['med-name-del'])
-        del_reason = str(request.POST.get('med-del-reason'))
-        # store deleted item to keep track of them
-
-        del_item = Medication.objects.filter(user=user).filter(name_of_medication=med_name_del)
-
-        if del_item.exists():
-            if del_reason:
-                DeletedMedication.objects.create(user=user, name_of_medication=med_name_del, reason=del_reason)
-            else:
-                DeletedMedication.objects.create(user=user, name_of_medication=med_name_del)
-            info_med_del = True
-            del_item.delete()
-            # delete the record from database
-        else:
-            item_not_found = True
-
-        del_item.delete()
-
-        # del item
-        return render(request, "mood/index.html", {
-            'info_med_del': info_med_del,
-            'item_not_found': item_not_found
-        })
-
-
-def medication_update(request):
-    med_name_add = None
-    med_description = None
-    info_med = None
-    info_med_duplicate = None
-    if request.method == "POST" and request.user.is_authenticated:
-        user = request.user
-        med_name_add = str(request.POST['med-name-add'])
-        print("med name", med_name_add)
-        # adding medication to the database
-        med_description = str(request.POST['med-description'])
-        # make sure there are no duplicates
-        duplicate_check = Medication.objects.filter(user=user, name_of_medication=med_name_add)
-        if duplicate_check.exists():
-            info_med_duplicate = True
-        else:
-            Medication.objects.create(user=user, name_of_medication=med_name_add, description=med_description)
-            info_med = True
-    return render(request, "mood/index.html", {'info_med': info_med,
-                                               'info_med_duplicate': info_med_duplicate})
 
 
 def message(request):
@@ -210,6 +156,75 @@ def mood_history(request):
                       })
     else:
         return render(request, "mood/error404.html")
+
+
+def medication_update(request):
+    med_name_add = None
+    med_description = None
+    info_med = None
+    info_med_error = None
+    info_med_duplicate = None
+    if request.method == "POST" and request.user.is_authenticated:
+        user = request.user
+        med_name_add = str(request.POST['med-name-add'])
+        print("med name", med_name_add)
+        # checking using API of national library of medicine whether a given medication exists or not
+
+        if check_medication(med_name_add) == 0:
+            # adding medication to the database
+            med_description = str(request.POST['med-description'])
+            # make sure there are no duplicates
+            duplicate_check = Medication.objects.filter(user=user, name_of_medication=med_name_add)
+            if duplicate_check.exists():
+                info_med_duplicate = True
+            else:
+                Medication.objects.create(user=user, name_of_medication=med_name_add, description=med_description)
+                info_med = True
+            return render(request, "mood/index.html", {'info_med': info_med,
+                                                       'info_med_duplicate': info_med_duplicate})
+        else:
+            info_med_error = True
+            return render(request, "mood/index.html", {'info_med_error': info_med_error,
+                                                       })
+
+
+
+def medication_delete(request):
+    del_item = None
+    del_reason = None
+    info_med_del = None
+    item_not_found = None
+    if request.method == "POST" and request.user.is_authenticated:
+        user = request.user
+        med_name_del = str(request.POST['med-name-del'])
+        del_reason = str(request.POST.get('med-del-reason'))
+        # store deleted item to keep track of them
+
+        del_item = Medication.objects.filter(user=user).filter(name_of_medication=med_name_del)
+
+        if del_item.exists():
+            if del_reason:
+                DeletedMedication.objects.create(user=user, name_of_medication=med_name_del, reason=del_reason)
+            else:
+                DeletedMedication.objects.create(user=user, name_of_medication=med_name_del)
+            info_med_del = True
+            del_item.delete()
+            # delete the record from database
+        else:
+            item_not_found = True
+
+        del_item.delete()
+
+        # del item
+        return render(request, "mood/index.html", {
+            'info_med_del': info_med_del,
+            'item_not_found': item_not_found
+        })
+
+
+
+
+
 
 
 def mood_history_result(request):

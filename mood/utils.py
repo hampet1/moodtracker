@@ -142,7 +142,26 @@ def export_pdf(df_data):
     return the_table
 
 '''
-import pandas as pd
+def check_medication(name_of_med):
+    """
+    checking whether a given medication has a valid name using publicly aceessible API
+    https://lhncbc.nlm.nih.gov/RxNav/APIs/api-RxNorm.getRxNormName.html
+    The whole API documentation accessible: https://lhncbc.nlm.nih.gov/RxNav/APIs/
+    if the medication is in the database return 0 if not return 1
+    """
+    try:
+        query = {'name': name_of_med}
+        response = requests.get('https://rxnav.nlm.nih.gov/REST/rxcui.json?', params=query)
+        response.raise_for_status()
+        try:
+            result = response.json()['idGroup']['rxnormId']
+            return 0
+        except KeyError:
+            return 1
+
+        # Code here will only run if the request is successful
+    except requests.exceptions.HTTPError as error:
+        print(error)
 
 
 def df_to_excell(request, df):

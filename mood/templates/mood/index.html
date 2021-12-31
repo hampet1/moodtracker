@@ -119,6 +119,13 @@
 </div>
 {% endif %}
 
+{% if info_med_error %}
+<div id="med-info-error" class="alert alert-danger" role="alert">
+  Your medication was not found in National Library of Medicine (NIH) database, please check the name again!
+</div>
+{% endif %}
+
+
 {% if info_med_duplicate %}
 <div id="med-info-dupl" class="alert alert-danger" role="alert">
   Your medication had already been added!
