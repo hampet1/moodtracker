@@ -15,7 +15,7 @@ import pandas as pd
 from datetime import datetime
 
 # helper funtions - for embedded layer of our model
-from .utils import input_layer, df_to_excell, adjust_time, today_date, check_medication, plot_bar, plot_heatmap, plot_line
+from .utils import input_layer, df_to_excell, adjust_time, today_date, check_medication, plot_bar, plot_heatmap, plot_line, plot_count
 from .forms import SearchForm
 
 # python stream manipulation
@@ -274,13 +274,12 @@ def mood_history_result(request):
 
                 try:
                     if display_type == '1':
-                        #count_plot = get_chart(df_sent, 'count_plot')
-                        #line_plot = get_chart(df_sent, 'line_plot')
-                        #bar_plot = get_chart(df_sent, 'bar_plot')
+
                         plot_bar_ = plot_bar(df_sent)
                         plot_heatmap_ = plot_heatmap(df_sent)
-                        #plot_line_ = plot_line(df_sent)
-                        #bar_plot_2 = get_chart(df_sent, 'bar_plot_2')
+                        plot_count_ = plot_count(df_sent)
+                        plot_line_ = plot_line(df_sent)
+
 
                         plots = True
                     if display_type == '2':
@@ -318,13 +317,10 @@ def mood_history_result(request):
                           {
                               "date_from": date_from,
                               "date_to": date_to,
-                              "count_plot": count_plot,
-                              "line_plot": line_plot,
-                              #"bar_plot": bar_plot,
-                              "bar_plot_2": bar_plot_2,
                               "plot_bar": plot_bar_,
                               "plot_heatmap": plot_heatmap_,
-                              #"plot_line": plot_line_,
+                              "plot_count": plot_count_,
+                              "plot_line": plot_line_,
                               "table_sentiment": table_data_sent,
                               "table_medication": table_medication,
                               "no_data": no_data,

@@ -73,8 +73,6 @@ def input_layer(data):
     return embedded_input
 
 
-
-
 '''
 def export_pdf(df_data):
     """
@@ -180,9 +178,11 @@ def preprocess_df_heatmap(data):
     data['month'] = data['date_created'].dt.month
     data['year'] = data['date_created'].dt.year
     data = data.drop_duplicates(subset="date_created")
-    data['month'] = data.apply(lambda row: months_convertor(row['month']), axis=1)
-    data.set_index('date_created')
-    return data
+    # making deep copy while dealing with SettingWithCopyWarning
+    data_modified = data.copy()
+    data_modified['month_name'] = data_modified.apply(lambda row: months_convertor(row['month']), axis=1)
+    data_modified.set_index('date_created')
+    return data_modified
 
 
 def preprocess_df(data):
@@ -246,7 +246,7 @@ on a web page with Plotly.
     # List of graph objects for figure.
     # Each object will contain on series of data.
 
-    fig = px.density_heatmap(data, x="month", y="day", z=data['rating'], nbinsx=2, nbinsy=30,
+    fig = px.density_heatmap(data, x="month_name", y="day", z=data['rating'], nbinsx=2, nbinsy=30,
                              color_continuous_scale='viridis')
     layout = {
         'title': 'my new plot',
@@ -277,6 +277,94 @@ on a web page with Plotly.
 
     return fig.to_html()
 
+
+def plot_heatmap(data):
+    """
+View demonstrating how to display a graph object
+on a web page with Plotly.
+"""
+
+    data = preprocess_df_heatmap(data)
+
+    # List of graph objects for figure.
+    # Each object will contain on series of data.
+
+    fig = px.density_heatmap(data, x="month_name", y="day", z=data['rating'], nbinsx=2, nbinsy=30,
+                             color_continuous_scale='viridis')
+    layout = {
+        'title': 'my new plot',
+        'xaxis_title': 'data',
+        'yaxis_title': 'rating',
+        'height': 620,
+        'width': 860,
+    }
+
+    fig.update_layout(
+        title={
+            'text': f"Personal mood rating (heatmap)",
+            'y': 0.95,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+        },
+        xaxis_title="date",
+        yaxis_title="day",
+        legend_title="Legend Title",
+        font=dict(
+            family="Courier New, monospace",
+            size=14,
+            color="RebeccaPurple",
+        )
+    )
+    # Getting HTML needed to render the plot.
+
+    return fig.to_html()
+
+
+def plot_count(data):
+    """
+    View demonstrating how to display a graph object
+    on a web page with Plotly.
+    """
+
+    data = preprocess_df(data)
+
+    # List of graph objects for figure.
+    # Each object will contain on series of data.
+
+    negative = data['sentiment'].value_counts()[0]
+    positive = data['sentiment'].value_counts()[1]
+    # List of graph objects for figure.
+    # Each object will contain on series of data.
+    fig = px.histogram(x=['negative', 'positive'], y=[negative, positive], color=[negative, positive])
+    layout = {
+        'title': 'my new plot',
+        'xaxis_title': 'data',
+        'yaxis_title': 'rating',
+        'height': 620,
+        'width': 860,
+    }
+
+    fig.update_layout(
+        title={
+            'text': "Sentiment generated based on your day descriptions",
+            'y': 0.95,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+        },
+        xaxis_title="sentiment",
+        yaxis_title="count",
+        legend_title="Count",
+        font=dict(
+            family="Courier New, monospace",
+            size=14,
+            color="RebeccaPurple",
+        )
+    )
+    # Getting HTML needed to render the plot.
+
+    return fig.to_html()
 
 
 def plot_line(data):

@@ -49,6 +49,11 @@
 
      {% endif %}
 
+    {% if plot_count %}
+        {{plot_count|safe}}
+
+     {% endif %}
+
     {% if plot_line %}
         {{plot_line|safe}}
 
