@@ -20,7 +20,7 @@ import plotly.express as px
 from plotly.offline import plot
 import plotly.graph_objs as go
 
-#pandas
+# pandas
 import pandas as pd
 import requests
 
@@ -73,60 +73,7 @@ def input_layer(data):
     return embedded_input
 
 
-def get_graph():
-    '''
 
-    delete the comments below
-    '''
-
-    buffer = BytesIO()
-    # here we communicate with plt
-    plt.savefig(buffer, format="png")
-    # set cursor to the biggining of the stream
-    buffer.seek(0)
-    # retrieve the entire content of the file
-    image_png = buffer.getvalue()
-    # encode our bytes-like object - return encoded bytes
-    graph = base64.b64encode(image_png)
-    # get string out of the bytes
-    graph = graph.decode('utf-8')
-    # free memory of the buffer
-    buffer.close()
-    return graph
-
-
-def get_chart(data, chart_type):
-    print("graph is working")
-    plt.switch_backend('AGG')
-    fig = plt.figure(figsize=(8, 4))
-    # turn into datetime format
-    data['date_created'] = pd.to_datetime(data['date_created'])
-    data['date_created'] = data['date_created'].dt.date
-    data = data.set_index('date_created')
-
-
-
-    if chart_type == 'bar_plot':
-        plt.title("your day rating")
-        sns.barplot(x=data.index, y="sentiment", data=data,
-                    palette="Blues_d", ci=None)
-    elif chart_type == 'bar_plot_2':
-        plt.title("your day rating")
-        sns.barplot(x=data.index, y="sentiment", data=data,
-                    palette="Blues_d", ci=None)
-    elif chart_type == 'line_plot':
-        plt.title("sentiment based on your day description")
-        plt.plot(data['sentiment'], marker='o')
-    elif chart_type == 'count_plot':
-        data['sentiment'] = data['sentiment'].apply(lambda x: 'negative' if (x == 0) else 'positive')
-        plt.title("total sum of your sentiment based on your day description")
-        sns.countplot(x="sentiment",data=data, palette="magma")
-    else:
-        return "something went wrong"
-    plt.tight_layout()
-    # this one is needed for rendering the plot
-    chart = get_graph()
-    return chart
 
 '''
 def export_pdf(df_data):
@@ -142,6 +89,8 @@ def export_pdf(df_data):
     return the_table
 
 '''
+
+
 def check_medication(name_of_med):
     """
     checking whether a given medication has a valid name using publicly aceessible API
@@ -196,8 +145,6 @@ def today_date():
     return datetime.strftime(time_now, '%Y-%m-%d')
 
 
-
-
 def months_convertor(month):
     if month == 1:
         return "January"
@@ -227,9 +174,6 @@ def months_convertor(month):
         return "this is not valid month"
 
 
-
-
-
 def preprocess_df_heatmap(data):
     data['date_created'] = pd.to_datetime(data['date_created'], errors='coerce')
     data['day'] = data['date_created'].dt.day
@@ -249,68 +193,11 @@ def preprocess_df(data):
     return data
 
 
-
-
-
-
-
-def demo_plot_view(request):
-    """
-    View demonstrating how to display a graph object
-    on a web page with Plotly.
-    """
-
-    # Generating some data for plots.
-    x = [i for i in range(-10, 11)]
-    y1 = [3 * i for i in x]
-    y2 = [i ** 2 for i in x]
-    y3 = [10 * abs(i) for i in x]
-
-    # List of graph objects for figure.
-    # Each object will contain on series of data.
-    graphs = []
-
-    # Adding linear plot of y1 vs. x.
-    graphs.append(
-        go.Scatter(x=x, y=y1, mode='lines', name='Line y1')
-    )
-
-    # Adding scatter plot of y2 vs. x.
-    # Size of markers defined by y2 value.
-    graphs.append(
-        go.Scatter(x=x, y=y2, mode='markers', opacity=0.8,
-                   marker_size=y2, name='Scatter y2')
-    )
-
-    # Adding bar plot of y3 vs x.
-    graphs.append(
-        go.Bar(x=x, y=y3, name='Bar y3')
-    )
-
-    # Setting layout of the figure.
-    layout = {
-        'title': 'trying plotly',
-        'xaxis_title': 'X',
-        'yaxis_title': 'Y',
-        'height': 620,
-        'width': 860,
-    }
-
-    config = {'responsive': True}
-    # Getting HTML needed to render the plot.
-    plot_div = plot({'data': graphs, 'layout': layout},
-                    output_type='div')
-
-    return plot_div
-
-
 def plot_bar(data):
-
     """
 View demonstrating how to display a graph object
 on a web page with Plotly.
 """
-
 
     data = preprocess_df(data)
     mean_rating = round(data['rating'].mean(), 2)
@@ -327,23 +214,108 @@ on a web page with Plotly.
     }
 
     fig.update_layout(
-        title = {
-             'text': f"Personal mood rating, on average {mean_rating} out of 10",
-             'y': 0.95,
-             'x': 0.5,
-             'xanchor': 'center',
-             'yanchor': 'top',
-             },
-            xaxis_title = "date",
-            yaxis_title = "rating",
-            legend_title = "Legend Title",
-            font = dict(
-            family = "Courier New, monospace",
-            size = 14,
-            color = "RebeccaPurple",
-                )
+        title={
+            'text': f"Personal mood rating, on average {mean_rating} out of 10",
+            'y': 0.95,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+        },
+        xaxis_title="date",
+        yaxis_title="rating",
+        legend_title="Legend Title",
+        font=dict(
+            family="Courier New, monospace",
+            size=14,
+            color="RebeccaPurple",
         )
-# Getting HTML needed to render the plot.
+    )
+    # Getting HTML needed to render the plot.
 
+    return fig.to_html()
+
+
+def plot_heatmap(data):
+    """
+View demonstrating how to display a graph object
+on a web page with Plotly.
+"""
+
+    data = preprocess_df_heatmap(data)
+
+    # List of graph objects for figure.
+    # Each object will contain on series of data.
+
+    fig = px.density_heatmap(data, x="month", y="day", z=data['rating'], nbinsx=2, nbinsy=30,
+                             color_continuous_scale='viridis')
+    layout = {
+        'title': 'my new plot',
+        'xaxis_title': 'data',
+        'yaxis_title': 'rating',
+        'height': 620,
+        'width': 860,
+    }
+
+    fig.update_layout(
+        title={
+            'text': f"Personal mood rating (heatmap)",
+            'y': 0.95,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+        },
+        xaxis_title="date",
+        yaxis_title="day",
+        legend_title="Legend Title",
+        font=dict(
+            family="Courier New, monospace",
+            size=14,
+            color="RebeccaPurple",
+        )
+    )
+    # Getting HTML needed to render the plot.
+
+    return fig.to_html()
+
+
+
+def plot_line(data):
+    """
+View demonstrating how to display a graph object
+on a web page with Plotly.
+"""
+
+    data = preprocess_df(data)
+
+    # List of graph objects for figure.
+    # Each object will contain on series of data.
+
+    fig = px.line(data, x=data.index, y='sentiment', markers=True)
+    layout = {
+        'title': 'my new plot',
+        'xaxis_title': 'data',
+        'yaxis_title': 'rating',
+        'height': 620,
+        'width': 860,
+    }
+
+    fig.update_layout(
+        title={
+            'text': "Sentiment generated based on your day descriptions",
+            'y': 0.95,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+        },
+        xaxis_title="date",
+        yaxis_title="rating",
+        legend_title="Legend Title",
+        font=dict(
+            family="Courier New, monospace",
+            size=14,
+            color="RebeccaPurple",
+        )
+    )
+    # Getting HTML needed to render the plot.
 
     return fig.to_html()

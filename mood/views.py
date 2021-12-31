@@ -15,7 +15,7 @@ import pandas as pd
 from datetime import datetime
 
 # helper funtions - for embedded layer of our model
-from .utils import input_layer, get_chart, df_to_excell, adjust_time, today_date, demo_plot_view, check_medication, plot_bar
+from .utils import input_layer, df_to_excell, adjust_time, today_date, check_medication, plot_bar, plot_heatmap, plot_line
 from .forms import SearchForm
 
 # python stream manipulation
@@ -263,7 +263,6 @@ def mood_history_result(request):
                 .filter(user=user.id) \
                 .filter(date_created__date__lte=date_to, date_created__date__gte=date_from)
 
-            print("result medication is: ", result_medication)
             if len(result) > 0:
                 # using values method because results returns dictionary like object
                 df_sent = pd.DataFrame(result.values())
@@ -275,12 +274,14 @@ def mood_history_result(request):
 
                 try:
                     if display_type == '1':
-                        count_plot = get_chart(df_sent, 'count_plot')
-                        line_plot = get_chart(df_sent, 'line_plot')
+                        #count_plot = get_chart(df_sent, 'count_plot')
+                        #line_plot = get_chart(df_sent, 'line_plot')
                         #bar_plot = get_chart(df_sent, 'bar_plot')
                         plot_bar_ = plot_bar(df_sent)
-                        bar_plot_2 = get_chart(df_sent, 'bar_plot_2')
-                        plotly_graph = demo_plot_view(request)
+                        plot_heatmap_ = plot_heatmap(df_sent)
+                        #plot_line_ = plot_line(df_sent)
+                        #bar_plot_2 = get_chart(df_sent, 'bar_plot_2')
+
                         plots = True
                     if display_type == '2':
 
@@ -321,8 +322,9 @@ def mood_history_result(request):
                               "line_plot": line_plot,
                               #"bar_plot": bar_plot,
                               "bar_plot_2": bar_plot_2,
-                              "plotly_graph": plotly_graph,
                               "plot_bar": plot_bar_,
+                              "plot_heatmap": plot_heatmap_,
+                              #"plot_line": plot_line_,
                               "table_sentiment": table_data_sent,
                               "table_medication": table_medication,
                               "no_data": no_data,
@@ -378,3 +380,7 @@ def guideline(request):
         return render(request, 'mood/guideline.html')
     else:
         return render(request, "mood/error404.html")
+
+
+
+
