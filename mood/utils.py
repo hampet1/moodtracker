@@ -303,3 +303,47 @@ def demo_plot_view(request):
 
     return plot_div
 
+
+def plot_bar(data):
+
+    """
+View demonstrating how to display a graph object
+on a web page with Plotly.
+"""
+
+
+    data = preprocess_df(data)
+    mean_rating = round(data['rating'].mean(), 2)
+    # List of graph objects for figure.
+    # Each object will contain on series of data.
+
+    fig = px.bar(data, x=data.index, y="rating")
+    layout = {
+        'title': 'my new plot',
+        'xaxis_title': 'data',
+        'yaxis_title': 'rating',
+        'height': 620,
+        'width': 860,
+    }
+
+    fig.update_layout(
+        title = {
+             'text': f"Personal mood rating, on average {mean_rating} out of 10",
+             'y': 0.95,
+             'x': 0.5,
+             'xanchor': 'center',
+             'yanchor': 'top',
+             },
+            xaxis_title = "date",
+            yaxis_title = "rating",
+            legend_title = "Legend Title",
+            font = dict(
+            family = "Courier New, monospace",
+            size = 14,
+            color = "RebeccaPurple",
+                )
+        )
+# Getting HTML needed to render the plot.
+
+
+    return fig.to_html()

@@ -58,10 +58,10 @@
 
     {% endif %}
 
-    {% if plotly_graph %}
-    <img src="data:image/png;base64, {{plotly_graph|safe}}">
+    {% if plot_bar %}
+        {{plot_bar|safe}}
 
-    {% endif %}
+     {% endif %}
 
 
     <div class="button-space mb-5 mt-5">

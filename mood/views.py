@@ -15,7 +15,7 @@ import pandas as pd
 from datetime import datetime
 
 # helper funtions - for embedded layer of our model
-from .utils import input_layer, get_chart, df_to_excell, adjust_time, today_date, demo_plot_view, check_medication
+from .utils import input_layer, get_chart, df_to_excell, adjust_time, today_date, demo_plot_view, check_medication, plot_bar
 from .forms import SearchForm
 
 # python stream manipulation
@@ -229,6 +229,10 @@ def medication_delete(request):
 
 def mood_history_result(request):
     plots = None
+
+
+
+
     count_plot = None
     line_plot = None
     bar_plot = None
@@ -273,7 +277,8 @@ def mood_history_result(request):
                     if display_type == '1':
                         count_plot = get_chart(df_sent, 'count_plot')
                         line_plot = get_chart(df_sent, 'line_plot')
-                        bar_plot = get_chart(df_sent, 'bar_plot')
+                        #bar_plot = get_chart(df_sent, 'bar_plot')
+                        plot_bar_ = plot_bar(df_sent)
                         bar_plot_2 = get_chart(df_sent, 'bar_plot_2')
                         plotly_graph = demo_plot_view(request)
                         plots = True
@@ -308,22 +313,23 @@ def mood_history_result(request):
                 except ValueError as e:
                     no_data = True
 
-        return render(request, "mood/results.html",
-                      {
-                          "date_from": date_from,
-                          "date_to": date_to,
-                          "count_plot": count_plot,
-                          "line_plot": line_plot,
-                          "bar_plot": bar_plot,
-                          "bar_plot_2": bar_plot_2,
-                          "plotly_graph": plotly_graph,
-                          "table_sentiment": table_data_sent,
-                          "table_medication": table_medication,
-                          "no_data": no_data,
-                          "plots":plots,
-                      })
-    else:
-        return render(request, "mood/error404.html")
+            return render(request, "mood/results.html",
+                          {
+                              "date_from": date_from,
+                              "date_to": date_to,
+                              "count_plot": count_plot,
+                              "line_plot": line_plot,
+                              #"bar_plot": bar_plot,
+                              "bar_plot_2": bar_plot_2,
+                              "plotly_graph": plotly_graph,
+                              "plot_bar": plot_bar_,
+                              "table_sentiment": table_data_sent,
+                              "table_medication": table_medication,
+                              "no_data": no_data,
+                              "plots":plots,
+                          })
+        else:
+            return render(request, "mood/error404.html")
 
 
 def logout(request):

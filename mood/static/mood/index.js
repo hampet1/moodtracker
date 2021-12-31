@@ -59,6 +59,7 @@ $(document).ready(function() {
         $('#data-processed-info').alert('close');
         $('#med-not-found').alert('close');
         $('#info-posted').alert('close');
+        $('#med-info-error').alert('close');
     }, 8000);
 });
 
