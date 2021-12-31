@@ -20,6 +20,10 @@ import plotly.express as px
 from plotly.offline import plot
 import plotly.graph_objs as go
 
+#pandas
+import pandas as pd
+import requests
+
 # df to pdf export
 from matplotlib.backends.backend_pdf import PdfPages
 from reportlab.pdfgen import canvas
@@ -171,6 +175,64 @@ def adjust_time(df):
 def today_date():
     time_now = datetime.now()
     return datetime.strftime(time_now, '%Y-%m-%d')
+
+
+
+
+def months_convertor(month):
+    if month == 1:
+        return "January"
+    elif month == 2:
+        return "February"
+    elif month == 3:
+        return "March"
+    elif month == 4:
+        return "April"
+    elif month == 5:
+        return "May"
+    elif month == 6:
+        return "June"
+    elif month == 7:
+        return "July"
+    elif month == 8:
+        return "August"
+    elif month == 9:
+        return "September"
+    elif month == 10:
+        return "October"
+    elif month == 11:
+        return "November"
+    elif month == 12:
+        return "December"
+    else:
+        return "this is not valid month"
+
+
+
+
+
+def preprocess_df_heatmap(data):
+    data['date_created'] = pd.to_datetime(data['date_created'], errors='coerce')
+    data['day'] = data['date_created'].dt.day
+    data['month'] = data['date_created'].dt.month
+    data['year'] = data['date_created'].dt.year
+    data = data.drop_duplicates(subset="date_created")
+    data['month'] = data.apply(lambda row: months_convertor(row['month']), axis=1)
+    data.set_index('date_created')
+    return data
+
+
+def preprocess_df(data):
+    data['date_created'] = pd.to_datetime(data['date_created'])
+    data['date_created'] = data['date_created'].dt.date
+    data = data.drop_duplicates(subset="date_created")
+    data = data.set_index('date_created')
+    return data
+
+
+
+
+
 
 
 def demo_plot_view(request):
