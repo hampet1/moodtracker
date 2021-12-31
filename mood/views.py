@@ -32,7 +32,7 @@ def get_range(value):
     """
     this is the way to use range in jinja2 while working with django
     """
-    return range(value)
+    return range(1,value)
 
 
 def index(request):
