@@ -5,7 +5,7 @@ import copy
 import pickle
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
-# from tensorflow.keras.preprocessing.text import one_hot
+from tensorflow.keras.preprocessing.text import one_hot
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 # from tensorflow.random import set_seed
 # set_seed(1)
