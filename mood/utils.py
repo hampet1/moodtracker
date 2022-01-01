@@ -1,6 +1,7 @@
 # for text processing
 import re
 import os
+import copy
 import pickle
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
@@ -179,7 +180,7 @@ def preprocess_df_heatmap(data):
     data['year'] = data['date_created'].dt.year
     data = data.drop_duplicates(subset="date_created")
     # making deep copy while dealing with SettingWithCopyWarning
-    data_modified = data.copy()
+    data_modified = copy.deepcopy(data)
     data_modified['month_name'] = data_modified.apply(lambda row: months_convertor(row['month']), axis=1)
     data_modified.set_index('date_created')
     return data_modified
@@ -198,7 +199,6 @@ def plot_bar(data):
 View demonstrating how to display a graph object
 on a web page with Plotly.
 """
-
     data = preprocess_df(data)
     mean_rating = round(data['rating'].mean(), 2)
     # List of graph objects for figure.
@@ -242,7 +242,6 @@ on a web page with Plotly.
 """
 
     data = preprocess_df_heatmap(data)
-
     # List of graph objects for figure.
     # Each object will contain on series of data.
 

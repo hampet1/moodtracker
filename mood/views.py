@@ -1,30 +1,75 @@
 from django.shortcuts import render
-from keras.models import model_from_json
+
 from .models import Sentiment, Medication, DeletedMedication
+
 from django.contrib.auth.models import User
 from django.template.defaulttags import register
-from django.http import HttpResponse
 
 # keras model manipulation
 from keras.models import model_from_json
 # other packages
 import os
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-from datetime import datetime
+
 
 # helper funtions - for embedded layer of our model
-from .utils import input_layer, df_to_excell, adjust_time, today_date, check_medication, plot_bar, plot_heatmap, plot_line, plot_count
+from .utils import input_layer, df_to_excell, adjust_time, today_date, check_medication, plot_heatmap, plot_line, plot_bar, plot_count
 from .forms import SearchForm
 
-# python stream manipulation
-from io import BytesIO
-
-import plotly.graph_objects as go
 
 weights_path = os.getcwd() + '\model.h5'
 model_path = os.getcwd() + '\model.json'
+import plotly.express as px
+
+
+def preprocess_df(data):
+    data['date_created'] = pd.to_datetime(data['date_created'])
+    data['date_created'] = data['date_created'].dt.date
+    data = data.drop_duplicates(subset="date_created")
+    data = data.set_index('date_created')
+    return data
+
+
+def plot_bar(data):
+    """
+    View demonstrating how to display a graph object
+    on a web page with Plotly.
+    """
+    data = preprocess_df(data)
+    mean_rating = round(data['rating'].mean(), 2)
+    # List of graph objects for figure.
+    # Each object will contain on series of data.
+
+    fig = px.bar(data, x=data.index, y="rating")
+    layout = {
+        'title': 'my new plot',
+        'xaxis_title': 'data',
+        'yaxis_title': 'rating',
+        'height': 620,
+        'width': 860,
+    }
+
+    fig.update_layout(
+        title={
+            'text': f"Personal mood rating, on average {mean_rating} out of 10",
+            'y': 0.95,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+        },
+        xaxis_title="date",
+        yaxis_title="rating",
+        legend_title="Legend Title",
+        font=dict(
+            family="Courier New, monospace",
+            size=14,
+            color="RebeccaPurple",
+        )
+    )
+    # Getting HTML needed to render the plot.
+
+    return fig.to_html()
 
 
 @register.filter
@@ -32,7 +77,7 @@ def get_range(value):
     """
     this is the way to use range in jinja2 while working with django
     """
-    return range(1,value)
+    return range(1, value)
 
 
 def index(request):
@@ -47,8 +92,6 @@ def index(request):
                       })
     else:
         return render(request, "mood/error404.html")
-
-
 
 
 def message(request):
@@ -103,7 +146,8 @@ def message(request):
                 try:
                     if sentiment is not None:
                         rating = request.POST['rating']
-                        Sentiment.objects.create(user=user, message=message_input, sentiment=sentiment, rating=int(rating))
+                        Sentiment.objects.create(user=user, message=message_input, sentiment=sentiment,
+                                                 rating=int(rating))
                         info = True
                 except ValueError as e:
                     Sentiment.objects.create(user=user, rating=0)
@@ -188,7 +232,6 @@ def medication_update(request):
                                                        })
 
 
-
 def medication_delete(request):
     del_item = None
     del_reason = None
@@ -222,21 +265,12 @@ def medication_delete(request):
         })
 
 
-
-
-
-
-
 def mood_history_result(request):
     plots = None
-
-
-
-
-    count_plot = None
-    line_plot = None
-    bar_plot = None
-    bar_plot_2 = None
+    plot_heatmap_ = None
+    plot_line_ = None
+    plot_bar_ = None
+    plot_count_ = None
     no_data = None
     date_from = None
     date_to = None
@@ -263,44 +297,41 @@ def mood_history_result(request):
                 .filter(user=user.id) \
                 .filter(date_created__date__lte=date_to, date_created__date__gte=date_from)
 
-            if len(result) > 0:
-                # using values method because results returns dictionary like object
-                df_sent = pd.DataFrame(result.values())
-                df_sent = df_sent.drop(columns='id')
+            if len(result) <= 0:
+                no_data = True
+                return render(request, "mood/results.html", {"no_data": no_data})
 
-            if len(result_medication) > 0:
-                df_med = pd.DataFrame(result_medication.values())
-                df_med = df_med.drop(columns='id')
+            # using values method because results returns dictionary like object
+            df_sent = pd.DataFrame(result.values())
+            df_sent = df_sent.drop(columns='id')
 
-                try:
-                    if display_type == '1':
+            try:
+                if display_type == '1':
+                    plot_bar_ = plot_bar(df_sent)
+                    plot_heatmap_ = plot_heatmap(df_sent)
+                    plot_line_ = plot_line(df_sent)
+                    plot_count_ = plot_count(df_sent)
+                    plots = True
+                if display_type == '2':
 
-                        plot_bar_ = plot_bar(df_sent)
-                        plot_heatmap_ = plot_heatmap(df_sent)
-                        plot_count_ = plot_count(df_sent)
-                        plot_line_ = plot_line(df_sent)
+                    # store into sessions - used for excel export
+                    df_for_session = df_sent
+                    df_for_session['date_created'] = df_for_session['date_created'].astype(str)
+                    dict_obj = df_for_session.to_dict('list')
+                    request.session['data'] = dict_obj
+                    # adjusting time for sentiment table
+                    df_sent['index'] = df_sent.index + 1
+                    df_sent['rating'] = df_sent['rating'].apply(lambda x: x if (x != 0) else 'no record')
+                    df_sent['sentiment'] = df_sent['sentiment'].apply(lambda x: x if (x in [0, 1]) else 'no record')
+                    df_sent = adjust_time(df_sent)
 
+                    if len(result_medication) > 0:
+                        df_med = pd.DataFrame(result_medication.values())
+                        df_med = df_med.drop(columns='id')
 
-                        plots = True
-                    if display_type == '2':
-
-                        # store into sessions - used for excel export
-                        df_for_session = df_sent
-                        print("this one is working")
-                        df_for_session['date_created'] = df_for_session['date_created'].astype(str)
-                        dict_obj = df_for_session.to_dict('list')
-                        request.session['data'] = dict_obj
-                        # adjusting time for sentiment table
-                        df_sent['index'] = df_sent.index + 1
-                        df_sent['rating'] = df_sent['rating'].apply(lambda x: x if (x != 0) else 'no record')
-                        df_sent['sentiment'] = df_sent['sentiment'].apply(lambda x: x if (x in [0, 1]) else 'no record')
-                        df_sent = adjust_time(df_sent)
-
-                        # adjusting time for medication table
                         df_med['index'] = df_med.index + 1
                         df_med['description'] = df_med['description'].apply(lambda x: x if (x != '') else 'no record')
                         # creating list for displaying sentiment table
-                        print("df med is: ", df_med)
                         for i in range(df_sent.shape[0]):
                             temp = df_sent.iloc[i]
                             table_data_sent.append(dict(temp))
@@ -310,8 +341,8 @@ def mood_history_result(request):
                             temp = df_med.iloc[i]
                             table_medication.append(dict(temp))
 
-                except ValueError as e:
-                    no_data = True
+            except ValueError as e:
+                no_data = True
 
             return render(request, "mood/results.html",
                           {
@@ -324,8 +355,9 @@ def mood_history_result(request):
                               "table_sentiment": table_data_sent,
                               "table_medication": table_medication,
                               "no_data": no_data,
-                              "plots":plots,
+                              "plots": plots,
                           })
+
         else:
             return render(request, "mood/error404.html")
 
@@ -348,7 +380,6 @@ def download_pdf(request):
     """
 
     if request.user.is_authenticated:
-        print("something is happening")
         # getting data from Sentiment model
 
         if request.method == 'POST':
@@ -377,6 +408,4 @@ def guideline(request):
     else:
         return render(request, "mood/error404.html")
 
-
-
-
+# todo work on delete medication - create a graph with it and automatically incormorate type of medication using REST API
