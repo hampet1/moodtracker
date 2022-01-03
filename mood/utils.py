@@ -31,14 +31,14 @@ from django.http import HttpResponse
 from datetime import datetime
 
 # load my encoder
-with open(os.getcwd() + '\encoder', "rb") as f:
-    one_hot = pickle.load(f)
+#with open(os.getcwd() + '\encoder', "rb") as f:
+#    one_hot = pickle.load(f)
 
-print("one hot is on", one_hot)
+#print("one hot is on", one_hot)
 
 
 def preprocessing(data):
-    print("one hot is:", one_hot)
+#   print("one hot is:", one_hot)
     ps = PorterStemmer()
     data = data.split('.')
     corpus = []
