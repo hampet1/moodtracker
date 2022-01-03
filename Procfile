@@ -1,1 +1,1 @@
-web: waitress-serve --port=$PORT tracker.wsgi:application
+web: gunicorn tracker.wsgi
