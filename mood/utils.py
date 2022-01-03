@@ -15,18 +15,15 @@ from io import BytesIO
 import base64
 
 # graphs
-import matplotlib.pyplot as plt
-import seaborn as sns
 import plotly.express as px
-from plotly.offline import plot
-import plotly.graph_objs as go
+
 
 # pandas
 import pandas as pd
 import requests
 
 # df to pdf export
-from matplotlib.backends.backend_pdf import PdfPages
+
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 
