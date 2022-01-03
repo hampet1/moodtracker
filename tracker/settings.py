@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-wye%quv3^@-=iyx90f=m#vbh8hr=35!)^5@)!l6$d_)66nr4f8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['new-tracker-app.herokuapp.com', '127.0.0.1']
 
 DATETIME_FORMAT = '%d-%m-%Y %H:%M:%S'
 
