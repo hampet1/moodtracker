@@ -14,12 +14,11 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-<<<<<<< HEAD
+
 
 #change
-=======
-print("my base dir is, ", BASE_DIR)
->>>>>>> d8d475d391e9c9ee397be84163009d7c71e50438
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
