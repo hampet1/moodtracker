@@ -14,8 +14,12 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+<<<<<<< HEAD
 
 #change
+=======
+print("my base dir is, ", BASE_DIR)
+>>>>>>> d8d475d391e9c9ee397be84163009d7c71e50438
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -26,7 +30,7 @@ SECRET_KEY = 'django-insecure-wye%quv3^@-=iyx90f=m#vbh8hr=35!)^5@)!l6$d_)66nr4f8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://trackmood.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['trackmood.herokuapp.com', '127.0.0.1']
 
 DATETIME_FORMAT = '%d-%m-%Y %H:%M:%S'
 
