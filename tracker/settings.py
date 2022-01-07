@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 
-
+import django_heroku
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #__file__ is the pathname of the file from which the module was loaded, if it was loaded from a file.
 
@@ -146,3 +146,7 @@ STATICFILES_DIRS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DATE_INPUT_FORMAT = "%d-%m-%Y"
+
+
+
+django_heroku.settings(locals())
