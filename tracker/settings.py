@@ -15,6 +15,7 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #__file__ is the pathname of the file from which the module was loaded, if it was loaded from a file.
 
+# project root is where setting is exactly placed
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # DIRNAME PARENT DIRECTORY
 BASE_DIR = os.path.dirname(PROJECT_ROOT)
