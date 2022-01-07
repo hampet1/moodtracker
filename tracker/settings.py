@@ -10,10 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
-from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+#__file__ is the pathname of the file from which the module was loaded, if it was loaded from a file.
+
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+# DIRNAME PARENT DIRECTORY
+BASE_DIR = os.path.dirname(PROJECT_ROOT)
+print("project root is ", PROJECT_ROOT)
 print("our base dir is: ", BASE_DIR)
 
 
@@ -25,7 +30,7 @@ print("our base dir is: ", BASE_DIR)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = 'django-insecure-wye%quv3^@-=iyx90f=m#vbh8hr=35!)^5@)!l6$d_)66nr4f89'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -88,7 +93,7 @@ WSGI_APPLICATION = 'tracker.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': 'db.sqlite3',
     }
 }
 
@@ -127,7 +132,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 # setting for deployment - heroku
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATIC_URL = '/static/'
 
