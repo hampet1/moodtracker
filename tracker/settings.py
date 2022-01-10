@@ -35,7 +35,7 @@ print("our base dir is: ", BASE_DIR)
 SECRET_KEY = 'django-insecure-wye%quv3^@-=iyx90f=m#vbh8hr=35!)^5@)!l6$d_)66nr4f89'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['trackmood.herokuapp.com', '127.0.0.1']
 
