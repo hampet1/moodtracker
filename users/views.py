@@ -21,8 +21,8 @@ class SignUpView(generic.CreateView):
 def index(request):
     # check if user is logged in
     # if not redirect it
-#    if not request.user.is_authenticated:
-#        return HttpResponseRedirect(reverse("login"))
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
     # rendering different app
     return render(request, "mood/index.html")
 
