@@ -34,7 +34,7 @@ print("our base dir is: ", BASE_DIR)
 SECRET_KEY = 'django-insecure-wye%quv3^@-=iyx90f=m#vbh8hr=35!)^5@)!l6$d_)66nr4f89'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['trackmood.herokuapp.com', '127.0.0.1']
 
@@ -133,6 +133,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 # setting for deployment - heroku
+# absolut path
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = '/static/'

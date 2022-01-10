@@ -1,0 +1,74 @@
+
+
+.logo-sm {
+    height: 45px;
+    width: auto;
+}
+
+#wrapper {
+    width: 100%;
+    overflow: hidden;
+    margin: auto;
+    background-color: #ffffff;
+    padding-top: 5%;
+    text-align:center;
+
+}
+
+
+
+
+#my-nav {
+    background-color:#EE4C7C !important;
+
+}
+
+
+/*
+.sidenav {
+    height:200%;
+    width:20%;
+    position: fixed;
+    z-index:1;
+    top:0;
+    left:0;
+    background-color:#C3073F;
+    overflow-x: :hidden;
+    padding-top:20px;
+}
+*/
+
+#content {
+    width:100%;
+    background-color:#ffffff !important;
+    float:left;
+    margin:auto;
+
+}
+/*
+.sidenav a {
+    padding:6px 8px 6px 16px;
+    text-decoration: none;
+    font-size:25px;
+    color: #818181;
+    display:block;
+}
+*/
+
+.sidenav a:hover{
+    color:#f1f1f1;
+}
+
+/*
+.main{
+    margin-left:60px;
+    padding: 0px 10px;
+    text-align:center;
+}
+*/
+
+ul.no-bullets {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
