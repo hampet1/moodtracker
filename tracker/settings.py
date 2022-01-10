@@ -35,7 +35,7 @@ print("our base dir is: ", BASE_DIR)
 SECRET_KEY = 'django-insecure-wye%quv3^@-=iyx90f=m#vbh8hr=35!)^5@)!l6$d_)66nr4f89'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['trackmood.herokuapp.com', '127.0.0.1']
 
@@ -143,7 +143,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
