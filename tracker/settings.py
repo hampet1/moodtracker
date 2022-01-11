@@ -20,12 +20,6 @@ import django_heroku
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # DIRNAME PARENT DIRECTORY
 BASE_DIR = os.path.dirname(PROJECT_ROOT)
-print("project root is ", PROJECT_ROOT)
-print("our base dir is: ", BASE_DIR)
-
-
-#change
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
