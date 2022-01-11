@@ -18,8 +18,14 @@ from .utils import input_layer, df_to_excell, adjust_time, today_date, check_med
 from .forms import SearchForm
 
 
-weights_path = os.getcwd() + '\model.h5'
-model_path = os.getcwd() + '\model.json'
+# project root is where setting is exactly placed
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+BASE_DIR = os.path.dirname(PROJECT_ROOT)
+
+
+weights_path = os.path.join(BASE_DIR, 'model.h5')
+model_path = os.path.join(BASE_DIR, 'model.json')
 import plotly.express as px
 
 
