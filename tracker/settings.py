@@ -152,6 +152,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DATE_INPUT_FORMAT = "%d-%m-%Y"
 
-#sds
+# it automatically set a lot of configuration for us
 django_heroku.settings(locals())
 
