@@ -29,7 +29,7 @@ BASE_DIR = os.path.dirname(PROJECT_ROOT)
 SECRET_KEY = 'django-insecure-wye%quv3^@-=iyx90f=m#vbh8hr=35!)^5@)!l6$d_)66nr4f89'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG_VALUE')
 
 ALLOWED_HOSTS = ['trackmood.herokuapp.com', '127.0.0.1']
 
