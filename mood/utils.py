@@ -1,4 +1,6 @@
 # for text processing
+import nltk
+nltk.download()
 import re
 import os
 import copy

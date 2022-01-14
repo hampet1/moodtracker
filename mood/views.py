@@ -1,5 +1,6 @@
 from django.shortcuts import render
-
+import nltk
+nltk.download()
 from .models import Sentiment, Medication, DeletedMedication
 
 from django.contrib.auth.models import User
