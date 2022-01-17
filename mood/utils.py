@@ -170,7 +170,7 @@ def months_convertor(month):
     else:
         return "this is not valid month"
 
-
+'''
 def preprocess_df_heatmap(data):
     data['date_created'] = pd.to_datetime(data['date_created'], errors='coerce')
     data['day'] = data['date_created'].dt.day
@@ -182,7 +182,7 @@ def preprocess_df_heatmap(data):
     data_modified['month_name'] = data_modified.apply(lambda row: months_convertor(row['month']), axis=1)
     data_modified.set_index('date_created')
     return data_modified
-
+'''
 
 def preprocess_df(data):
     data['date_created'] = pd.to_datetime(data['date_created'])
@@ -232,7 +232,7 @@ on a web page with Plotly.
 
     return fig.to_html()
 
-
+'''
 def plot_heatmap(data):
     """
 View demonstrating how to display a graph object
@@ -275,49 +275,7 @@ on a web page with Plotly.
     return fig.to_html()
 
 
-def plot_heatmap(data):
-    """
-View demonstrating how to display a graph object
-on a web page with Plotly.
-"""
-
-    data = preprocess_df_heatmap(data)
-
-    # List of graph objects for figure.
-    # Each object will contain on series of data.
-
-    fig = px.density_heatmap(data, x="month_name", y="day", z=data['rating'], nbinsx=2, nbinsy=30,
-                             color_continuous_scale='viridis')
-    layout = {
-        'title': 'my new plot',
-        'xaxis_title': 'data',
-        'yaxis_title': 'rating',
-        'height': 620,
-        'width': 860,
-    }
-
-    fig.update_layout(
-        title={
-            'text': f"Personal mood rating (heatmap)",
-            'y': 0.95,
-            'x': 0.5,
-            'xanchor': 'center',
-            'yanchor': 'top',
-        },
-        xaxis_title="date",
-        yaxis_title="day",
-        legend_title="Legend Title",
-        font=dict(
-            family="Courier New, monospace",
-            size=14,
-            color="RebeccaPurple",
-        )
-    )
-    # Getting HTML needed to render the plot.
-
-    return fig.to_html()
-
-
+'''
 def plot_count(data):
     """
     View demonstrating how to display a graph object
