@@ -170,7 +170,7 @@ def months_convertor(month):
     else:
         return "this is not valid month"
 
-'''
+
 def preprocess_df_heatmap(data):
     data['date_created'] = pd.to_datetime(data['date_created'], errors='coerce')
     data['day'] = data['date_created'].dt.day
@@ -182,7 +182,7 @@ def preprocess_df_heatmap(data):
     data_modified['month_name'] = data_modified.apply(lambda row: months_convertor(row['month']), axis=1)
     data_modified.set_index('date_created')
     return data_modified
-'''
+
 
 def preprocess_df(data):
     data['date_created'] = pd.to_datetime(data['date_created'])
@@ -232,7 +232,7 @@ on a web page with Plotly.
 
     return fig.to_html()
 
-'''
+
 def plot_heatmap(data):
     """
 View demonstrating how to display a graph object
@@ -275,7 +275,7 @@ on a web page with Plotly.
     return fig.to_html()
 
 
-'''
+
 '''
 def plot_count(data):
     """
