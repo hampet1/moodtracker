@@ -276,7 +276,7 @@ on a web page with Plotly.
 
 
 
-'''
+
 def plot_count(data):
     """
     View demonstrating how to display a graph object
@@ -321,7 +321,7 @@ def plot_count(data):
     # Getting HTML needed to render the plot.
 
     return fig.to_html()
-
+'''
 
 def plot_line(data):
     """
