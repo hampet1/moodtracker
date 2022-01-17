@@ -276,7 +276,7 @@ on a web page with Plotly.
 
 
 
-
+'''
 def plot_count(data):
     """
     View demonstrating how to display a graph object
@@ -284,6 +284,7 @@ def plot_count(data):
     """
 
     data = preprocess_df(data)
+    print("data in plot count ", data)
 
     # List of graph objects for figure.
     # Each object will contain on series of data.
@@ -322,6 +323,7 @@ def plot_count(data):
 
     return fig.to_html()
 '''
+
 
 def plot_line(data):
     """
@@ -363,4 +365,3 @@ on a web page with Plotly.
     # Getting HTML needed to render the plot.
 
     return fig.to_html()
-'''

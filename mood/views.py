@@ -14,7 +14,7 @@ import pandas as pd
 
 
 # helper funtions - for embedded layer of our model
-from .utils import input_layer, df_to_excell, adjust_time, today_date, check_medication, plot_heatmap, plot_bar, plot_count
+from .utils import input_layer, df_to_excell, adjust_time, today_date, check_medication, plot_heatmap, plot_bar, plot_line
 from .forms import SearchForm
 
 
@@ -315,8 +315,8 @@ def mood_history_result(request):
                 if display_type == '1':
                     plot_bar_ = plot_bar(df_sent)
                     plot_heatmap_ = plot_heatmap(df_sent)
-                    #plot_line_ = plot_line(df_sent)
-                    plot_count_ = plot_count(df_sent)
+                    plot_line_ = plot_line(df_sent)
+                    #plot_count_ = plot_count(df_sent)
                     plots = True
                 if display_type == '2':
 
