@@ -4,7 +4,10 @@ import re
 import os
 import copy
 import pickle
+import nltk
+nltk.download('stopwords')
 from nltk.corpus import stopwords
+
 from nltk.stem.porter import PorterStemmer
 from tensorflow.keras.preprocessing.text import one_hot
 from tensorflow.keras.preprocessing.sequence import pad_sequences
@@ -37,7 +40,6 @@ from datetime import datetime
 
 #print("one hot is on", one_hot)
 
-
 def preprocessing(data):
 #   print("one hot is:", one_hot)
     ps = PorterStemmer()
@@ -47,7 +49,7 @@ def preprocessing(data):
         review = re.sub('[^a-zA-Z]', ' ', i)
         review = review.lower()
         review = review.split()
-        #review = [ps.stem(word) for word in review if not word in stopwords.words('english')]
+        review = [ps.stem(word) for word in review if not word in stopwords.words('english')]
         review = ' '.join(review)
         if review != '':
             corpus.append(review)
@@ -276,7 +278,7 @@ on a web page with Plotly.
 
 
 
-'''
+
 def plot_count(data):
     """
     View demonstrating how to display a graph object
@@ -322,7 +324,7 @@ def plot_count(data):
     # Getting HTML needed to render the plot.
 
     return fig.to_html()
-'''
+
 
 
 def plot_line(data):
