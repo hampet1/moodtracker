@@ -47,7 +47,7 @@ def preprocessing(data):
         review = re.sub('[^a-zA-Z]', ' ', i)
         review = review.lower()
         review = review.split()
-        review = [ps.stem(word) for word in review if not word in stopwords.words('english')]
+        #review = [ps.stem(word) for word in review if not word in stopwords.words('english')]
         review = ' '.join(review)
         if review != '':
             corpus.append(review)
