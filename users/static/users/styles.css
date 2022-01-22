@@ -75,5 +75,6 @@ body {
   }
   # side-banner {
     width: 0%;
+    visibility: hidden;
   }
 }
