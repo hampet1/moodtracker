@@ -12,7 +12,9 @@
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css" integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js" integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js" integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
+    <!-- Load an icon library to show a hamburger menu (bars) on small screens -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<!-- custom js and css -->
     <link href="{% static 'mood/styles.css' %}" rel="stylesheet">
 
@@ -34,9 +36,16 @@
 {% load static %}
 <nav id = "my-nav" class="navbar navbar-expand-lg navbar-light bg-primary p-3 font-weight-bold">
   <div class="container-fluid">
+
+      <button class="navbar-toggler toggler-example" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1"
+    aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation"><span class="dark-blue-text"><i
+        class="fas fa-bars fa-1x"></i></span></button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="navbarSupportedContent1">
     <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'mood/logo.png' %}" class="logo-sm"></a>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
+
       <ul class="navbar-nav">
         <li class="nav-item">
           <a class="nav-link {% if request.path == '/'%} active {% endif %}" href="{% url 'index' %}">Home</a>
@@ -52,8 +61,10 @@
         </li>
       </ul>
     </div>
+
+
     {% if request.user.is_authenticated %}
-        <div class="nav-item dropdown btn-sm mr-5">
+        <div class="nav-item dropdown btn-sm mr-2 pr-2">
           <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               {{request.user}}
           </button>
@@ -71,8 +82,8 @@
 <div id="wrapper">
 <div class="container-fluid">
 
-		<div class="row justify-content-center mt-3 mb-5 pb-5" style="background-color: #ffffff">
-			<div class="col-8">
+		<div class="row justify-content-center mt-3 mb-5 pb-2" style="background-color: #ffffff">
+			<div class="col-md-8 col-sm-4 col-xs-4" >
 
 				{% block headline %}
 
@@ -96,16 +107,17 @@
 
 </div>
 
-    <footer class="bg-white text-dark pt-1 pb-3 mt-auto" style="background-color: #f0f2f5 !important;">
-        <div class="container text-center text-md-left">
-            <div class="row text-center text-md-left">
-                <div class="col-md-5 col-lg-5 col-xl-5 max-auto mt-4">
+    <footer class="bg-white text-dark pt-5 pb-3 mt-auto" style="background-color: #f0f2f5 !important;">
+        <div class="container text-md-left">
+            <div class="row text-center">
+                <div class="col-md-4 col-sm-4 col-xs-4" >
                 <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'mood/logo.png' %}" class="logo-sm">&nbsp Mood Tracker</a>
-                <p>Designed and built with all the love in the world to help people with challenging mental condition. <h6>Disclaimer: neural network model for sentiment analysis is just a prototype with not optimal accuracy, please keep it in mind! </h6>
+                <p>Designed and built with all the love in the world to help people with challenging mental condition. <h6>Disclaimer: neural network model for sentiment analysis is just a prototype with not optimal accuracy, please keep it in mind! </h6></br>
 
                 </div>
-                <div class="col-md-4 col-lg-3 col-xl-3 mt-4 pt-3 pl-5 ml-3">
+                <div class="col-md-4 col-sm-4 col-xs-4" >
                 <h5 class="text">Links</h5>
+
                 <ul class="navbar-nav">
                     <li class="nav-item">
                       <a class="nav-link {% if request.path == '/'%} active {% endif %}" href="{% url 'index' %}">Home</a>
@@ -117,12 +129,12 @@
                       <a class="nav-link {% if request.path == '/home/mood_boost/'%} active {% endif %}" href="{% url 'mood_boost' %}">Seek for a mood booster?</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link {% if request.path == '/home/guideline/'%} active {% endif %}" href="{% url 'guideline' %}">Guideline</a>
+                      <a class="nav-link {% if request.path == '/home/guideline/'%} active {% endif %}" href="{% url 'guideline' %}">Guideline</a></br>
                     </li>
                   </ul>
                 </div>
 
-                <div class="col-md-3 col-lg-3 col-xl-3 max-auto mt-4 pt-3 ">
+                <div class="col-md-4 col-sm-4 col-xs-4" >
                     <h5 class="text">Contact</h5>
                     <p>phone: 0484845902</p>
                     <p>email: hamrozipetr@outlook.com</p>

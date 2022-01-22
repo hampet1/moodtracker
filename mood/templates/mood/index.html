@@ -104,7 +104,6 @@
 
                     {% endblock %}
 
-
 <h6> how are you feeling today? please shortly describe your day or your feelings</h6><br>
 <hr>
 {% if info %}
@@ -152,15 +151,8 @@
 {% endif %}
 
 
-
-<form action=" " method="POST">
-    {% csrf_token %}
-    {{form}}
-</form>
-
-
-
 <form action="{% url 'message'%}", method="post">
+
     {% csrf_token %}
     <div class="input-group">
       <div class="input-group-prepend">
@@ -205,5 +197,6 @@
     <button class="btn btn-success mt-4" id="add-med" type="button" data-toggle="modal" data-target="#add-medication" hidden> add medication </button>
     <button class="btn btn-warning mt-4" id="del-med" type="button" data-toggle="modal" data-target="#del-medication" hidden> delete medication </button>
 </form>
-
+</div>
+</div>
 {% endblock %}
