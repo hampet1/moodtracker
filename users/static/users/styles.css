@@ -35,8 +35,9 @@ body {
 }
 
 #side-banner {
-
     float:left;
+    position: absolute;
+    margin-top: 10%;
     width:36%;
     background-color:transparent;
     font-family: Arial;
@@ -58,13 +59,13 @@ body {
     width: 50%;
     margin: auto;
     margin-top: 1%;
-    padding: 1%;
     border-radius: 20px;
     float:right;
     margin-top: -10%;
     margin-bottom: 15%;
     clear: both;
-    border: 1.5px solid black;
+
+    padding: 5%;
 
 }
 
@@ -72,9 +73,16 @@ body {
 @media screen and (max-width: 800px) {
   #form {
     width: 100%; /* The width is 100%, when the viewport is 800px or smaller */
+    padding: 10%;
   }
-  # side-banner {
-    width: 0%;
-    visibility: hidden;
+  #side-banner {
+
+    padding-top: 5%;
+    width: 100%;
+    margin: auto;
+    position: relative;
+    padding-bottom: 15%;
+    z-index: 4000;
+    font-size: smaller;
   }
 }
