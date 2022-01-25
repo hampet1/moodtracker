@@ -5,6 +5,7 @@ import os
 import copy
 import pickle
 import nltk
+
 nltk.download('stopwords')
 from nltk.corpus import stopwords
 
@@ -21,7 +22,6 @@ import base64
 # graphs
 import plotly.express as px
 
-
 # pandas
 import pandas as pd
 import requests
@@ -34,14 +34,18 @@ from django.http import HttpResponse
 # time
 from datetime import datetime
 
-# load my encoder
-#with open(os.getcwd() + '\encoder', "rb") as f:
-#    one_hot = pickle.load(f)
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(PROJECT_ROOT)
 
-#print("one hot is on", one_hot)
+# load my encoder - to ensure the portability
+with open(BASE_DIR +'\encoder', "rb") as f:
+    one_hot = pickle.load(f)
+
+
+
 
 def preprocessing(data):
-#   print("one hot is:", one_hot)
+    #   print("one hot is:", one_hot)
     ps = PorterStemmer()
     data = data.split('.')
     corpus = []
@@ -179,7 +183,7 @@ def preprocess_df_heatmap(data):
     data['month'] = data['date_created'].dt.month
     data['year'] = data['date_created'].dt.year
     data = data.drop_duplicates(subset="date_created")
-    # making deep copy while dealing with SettingWithCopyWarning
+    # making deep copy while dealing with SettingWithCopyWarning, or just copy
     data_modified = copy.deepcopy(data)
     data_modified['month_name'] = data_modified.apply(lambda row: months_convertor(row['month']), axis=1)
     data_modified.set_index('date_created')
@@ -187,7 +191,7 @@ def preprocess_df_heatmap(data):
 
 
 def preprocess_df(data):
-    data['date_created'] = pd.to_datetime(data['date_created'])
+    data['date_created'] = pd.to_datetime(data['date_created']).copy()
     data['date_created'] = data['date_created'].dt.date
     data = data.drop_duplicates(subset="date_created")
     data = data.set_index('date_created')
@@ -247,6 +251,7 @@ on a web page with Plotly.
 
     fig = px.density_heatmap(data, x="month_name", y="day", z=data['rating'], nbinsx=2, nbinsy=30,
                              color_continuous_scale='viridis')
+    config = {'responsive': True}
     layout = {
         'title': 'my new plot',
         'xaxis_title': 'data',
@@ -274,9 +279,7 @@ on a web page with Plotly.
     )
     # Getting HTML needed to render the plot.
 
-    return fig.to_html()
-
-
+    return fig.to_html(config=config)
 
 
 def plot_count(data):
@@ -286,13 +289,19 @@ def plot_count(data):
     """
 
     data = preprocess_df(data)
-    print("data in plot count ", data)
 
     # List of graph objects for figure.
     # Each object will contain on series of data.
+    negative = 0
+    positive = 0
+    try:
+        negative = data['sentiment'].value_counts()[0]
+        positive = data['sentiment'].value_counts()[1]
+    except Exception as e:
+        print(f"key error [{e}] : one (positive or negative count) or both counts are 0")
 
-    negative = data['sentiment'].value_counts()[0]
-    positive = data['sentiment'].value_counts()[1]
+
+
     # List of graph objects for figure.
     # Each object will contain on series of data.
     fig = px.histogram(x=['negative', 'positive'], y=[negative, positive], color=[negative, positive])
@@ -324,7 +333,6 @@ def plot_count(data):
     # Getting HTML needed to render the plot.
 
     return fig.to_html()
-
 
 
 def plot_line(data):

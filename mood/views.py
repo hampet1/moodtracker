@@ -23,7 +23,7 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 BASE_DIR = os.path.dirname(PROJECT_ROOT)
 
-
+# for deep learning model we have to
 weights_path = os.path.join(BASE_DIR, 'model.h5')
 model_path = os.path.join(BASE_DIR, 'model.json')
 import plotly.express as px
@@ -126,7 +126,7 @@ def message(request):
 
         # check if we already posted our daily mood and rating
         date_today = today_date()
-        any_message = Sentiment.objects.filter(user=1).filter(date_created__date=date_today)
+        any_message = Sentiment.objects.filter(user=user).filter(date_created__date=date_today)
 
         if any_message.exists():
             info_posted = True
@@ -217,7 +217,6 @@ def medication_update(request):
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
         med_name_add = str(request.POST['med-name-add'])
-        print("med name", med_name_add)
         # checking using API of national library of medicine whether a given medication exists or not
 
         if check_medication(med_name_add) == 0:
@@ -302,13 +301,13 @@ def mood_history_result(request):
             result_medication = Medication.objects \
                 .filter(user=user.id) \
                 .filter(date_created__date__lte=date_to, date_created__date__gte=date_from)
-
             if len(result) <= 0:
                 no_data = True
                 return render(request, "mood/results.html", {"no_data": no_data})
 
             # using values method because results returns dictionary like object
             df_sent = pd.DataFrame(result.values())
+
             df_sent = df_sent.drop(columns='id')
 
             try:
@@ -330,7 +329,6 @@ def mood_history_result(request):
                     df_sent['rating'] = df_sent['rating'].apply(lambda x: x if (x != 0) else 'no record')
                     df_sent['sentiment'] = df_sent['sentiment'].apply(lambda x: x if (x in [0, 1]) else 'no record')
                     df_sent = adjust_time(df_sent)
-
                     if len(result_medication) > 0:
                         df_med = pd.DataFrame(result_medication.values())
                         df_med = df_med.drop(columns='id')
@@ -346,6 +344,10 @@ def mood_history_result(request):
                         for i in range(df_med.shape[0]):
                             temp = df_med.iloc[i]
                             table_medication.append(dict(temp))
+                    else:
+                        for i in range(df_sent.shape[0]):
+                            temp = df_sent.iloc[i]
+                            table_data_sent.append(dict(temp))
 
             except ValueError as e:
                 no_data = True

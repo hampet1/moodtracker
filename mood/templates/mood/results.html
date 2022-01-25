@@ -39,13 +39,12 @@
 
     {% if plots %}
 
-
     {% if plot_bar %}
-        {{plot_bar|safe}}
+    {{plot_bar|safe}}
 
-     {% endif %}
+    {% endif %}
 
-    {% if plot_bar %}
+    {% if plot_heatmap %}
         {{plot_heatmap|safe}}
 
      {% endif %}
@@ -146,7 +145,7 @@
         <div class="button-space mb-5">
         <form action="{% url 'download_pdf' %}" method="POST">
             {% csrf_token %}
-            <input type="submit" class="btn btn-success mr-2" value="Download both tables as Excel" name="download_csv">
+            <input type="submit" class="btn btn-success mr-2" value="Download both tables as Excel" name="download_csv"></br></br>
             <a class="btn btn-primary" href="{% url 'mood_history' %}" role="button">Go back</a>
         </form>
     </div>
