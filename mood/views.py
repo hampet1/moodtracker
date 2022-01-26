@@ -171,10 +171,12 @@ def message(request):
             df_data = pd.DataFrame(all_sentiment.values())
             df_data = df_data.drop(columns='id')
 
+            #  used in edge case when we do not have any messages for this user
             try:
                 message_new = Sentiment.objects.get(pk=user.id)
             except message_new.DoesNotExist:
                 message_new = None
+
         return render(request, "mood/index.html",
                       {
                           'message': message_new,

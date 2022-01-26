@@ -291,7 +291,8 @@ def plot_count(data):
 
     # List of graph objects for figure.
     # Each object will contain on series of data.
-    fig = px.histogram(x=['negative', 'positive'], y=[negative, positive], color=[negative, positive])
+    categories = [positive, negative]
+    fig = px.histogram(x=['negative', 'positive'], y=[positive, negative], color=categories, text_auto=True)
     layout = {
         'title': 'my new plot',
         'xaxis_title': 'data',
