@@ -111,6 +111,7 @@ def message(request):
     info = None
     date_today = None
     message = None
+    message_new = None
     info_posted = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
@@ -170,9 +171,14 @@ def message(request):
             df_data = pd.DataFrame(all_sentiment.values())
             df_data = df_data.drop(columns='id')
 
+            try:
+                message_new = Sentiment.objects.get(pk=user.id)
+            except message_new.DoesNotExist:
+                message_new = None
         return render(request, "mood/index.html",
                       {
-                          'message': Sentiment.objects.get(pk=user.id),
+                          'message': message_new,
+
                           "info": info,
                           "info_posted": info_posted,
                       })
