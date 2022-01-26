@@ -78,22 +78,6 @@ def input_layer(data):
     return embedded_input
 
 
-'''
-def export_pdf(df_data):
-    """
-    export table to pdf
-
-    """
-    fig, ax = plt.subplots(figsize=(12, 4))
-    ax.axis('tight')
-    ax.axis('off')
-    the_table = ax.table(cellText=df_data.values, colLabels=df_data.columns, loc='center')
-    # Create the HttpResponse object with the appropriate PDF headers.
-    return the_table
-
-'''
-
-
 def check_medication(name_of_med):
     """
     checking whether a given medication has a valid name using publicly aceessible API
@@ -295,8 +279,11 @@ def plot_count(data):
     negative = 0
     positive = 0
     try:
-        negative = data['sentiment'].value_counts()[0]
-        positive = data['sentiment'].value_counts()[1]
+        negative = data['sentiment'].value_counts()[1]
+    except Exception as e:
+        print(f"key error [{e}] : one (positive or negative count) or both counts are 0")
+    try:
+        positive = data['sentiment'].value_counts()[0]
     except Exception as e:
         print(f"key error [{e}] : one (positive or negative count) or both counts are 0")
 
