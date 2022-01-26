@@ -292,8 +292,8 @@ def plot_count(data):
 
     # List of graph objects for figure.
     # Each object will contain on series of data.
-    blue = copy.copy(positive)
-    red = copy.copy(negative)
+    blue = copy.deepcopy(positive)
+    red = copy.deepcopy(negative)
     # in case of equal score, to keep different colors just add one to one of them
     if blue == red:
         categories = [blue, red + 1]
