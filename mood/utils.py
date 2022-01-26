@@ -296,10 +296,8 @@ def plot_count(data):
     red = copy.deepcopy(negative)
     # in case of equal score, to keep different colors just add one to one of them
     if blue == red:
-        categories = [blue, red + 1]
-    else:
-        categories = [blue, red]
-    fig = px.histogram(x=['negative', 'positive'], y=[positive, negative], color=categories, text_auto=True)
+        red + 1
+    fig = px.histogram(x=['negative', 'positive'], y=[positive, negative], color=[blue, red], text_auto=True)
     layout = {
         'title': 'my new plot',
         'xaxis_title': 'data',
