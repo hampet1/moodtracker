@@ -291,10 +291,13 @@ def plot_count(data):
 
     # List of graph objects for figure.
     # Each object will contain on series of data.
-    if positive == negative:
-        categories = [positive, negative + 1]
+    blue = positive
+    red = negative
+    # in case of equal score, to keep different colors just add one to one of them
+    if blue == red:
+        categories = [blue, red + 1]
     else:
-        categories = [positive, negative]
+        categories = [blue, red]
     fig = px.histogram(x=['negative', 'positive'], y=[positive, negative], color=categories, text_auto=True)
     layout = {
         'title': 'my new plot',
