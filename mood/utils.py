@@ -6,7 +6,6 @@ import copy
 import pickle
 import nltk
 
-
 nltk.download('stopwords')
 from nltk.corpus import stopwords
 
@@ -292,12 +291,10 @@ def plot_count(data):
 
     # List of graph objects for figure.
     # Each object will contain on series of data.
-    blue = copy.deepcopy(positive)
-    red = copy.deepcopy(negative)
-    # in case of equal score, to keep different colors just add one to one of them
-    if blue == red:
-        red + 1
-    fig = px.histogram(x=['negative', 'positive'], y=[positive, negative], color=[blue, red], text_auto=True)
+
+    categories = [positive, negative]
+
+    fig = px.histogram(x=['negative', 'positive'], y=[positive, negative], color=categories, text_auto=True)
     layout = {
         'title': 'my new plot',
         'xaxis_title': 'data',

@@ -107,6 +107,7 @@ def message(request):
     request.method == "POST"
     """
     sentiment = None
+    rating = None
     chart = None
     info = None
     date_today = None
@@ -124,22 +125,30 @@ def message(request):
         loaded_model.load_weights(weights_path)
         # our input message
         message_input = request.POST['message']
-
+        rating = request.POST['rating']
+        # if we did not pick any number the rating value will be the description itself
+        if len(rating) > 2:
+            rating = 0
         # check if we already posted our daily mood and rating
         date_today = today_date()
         any_message = Sentiment.objects.filter(user=user).filter(date_created__date=date_today)
-
         if any_message.exists():
             info_posted = True
+            return render(request, "mood/index.html",
+                          {
+                              'message': message_new,
+                              "info": info,
+                              "info_posted": info_posted,
+                          })
         else:
             # evaluate loaded model on test data
             loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+            # preprocess text
             text = input_layer(message_input)
 
             # predictions
             try:
                 pred = (loaded_model.predict(text) > 0.5).astype("int32")
-                print("pred:,", pred)
                 # our model prediction
 
                 if np.average(pred) < 0.5:
@@ -149,27 +158,27 @@ def message(request):
             except Exception as e:
                 print(f"something went wrong: {e}")
 
-            if 'rating' in request.POST:
+            if rating != 0:
                 try:
                     if sentiment is not None:
+                        print("this one is printing")
                         rating = request.POST['rating']
                         Sentiment.objects.create(user=user, message=message_input, sentiment=sentiment,
                                                  rating=int(rating))
                         info = True
                 except ValueError as e:
                     Sentiment.objects.create(user=user, rating=0)
+                    info = True
             else:
-                Sentiment.objects.create(user=user, rating=0)
-
-            all_sentiment = Sentiment.objects.filter(user=user)
-
-            # it's easier to work with dataframe
-            df_1 = pd.DataFrame(all_sentiment)
-
-            # we can bring it to html
-            # df_2 = df_2.to_html()
-            df_data = pd.DataFrame(all_sentiment.values())
-            df_data = df_data.drop(columns='id')
+                try:
+                    if sentiment is not None:
+                        print("this one is working")
+                        rating = request.POST['rating']
+                        Sentiment.objects.create(user=user, message=message_input, sentiment=sentiment,
+                                                 rating=0)
+                        info = True
+                except ValueError as e:
+                    Sentiment.objects.create(user=user, rating=0)
 
             #  used in edge case when we do not have any messages for this user
             try:
@@ -180,7 +189,6 @@ def message(request):
         return render(request, "mood/index.html",
                       {
                           'message': message_new,
-
                           "info": info,
                           "info_posted": info_posted,
                       })
@@ -326,17 +334,19 @@ def mood_history_result(request):
                     plot_count_ = plot_count(df_sent)
                     plots = True
                 if display_type == '2':
-
+                    # trying to avaid SettingwithCopyWarning for pandas dataframes
+                    df_sent_table = df_sent.copy()
                     # store into sessions - used for excel export
-                    df_for_session = df_sent
+                    df_for_session = df_sent_table
                     df_for_session['date_created'] = df_for_session['date_created'].astype(str)
                     dict_obj = df_for_session.to_dict('list')
                     request.session['data'] = dict_obj
                     # adjusting time for sentiment table
-                    df_sent['index'] = df_sent.index + 1
-                    df_sent['rating'] = df_sent['rating'].apply(lambda x: x if (x != 0) else 'no record')
-                    df_sent['sentiment'] = df_sent['sentiment'].apply(lambda x: x if (x in [0, 1]) else 'no record')
-                    df_sent = adjust_time(df_sent)
+                    df_sent_table['index'] = df_sent_table.index + 1
+                    df_sent_table['rating'] = df_sent_table['rating'].apply(lambda x: x if (x != 0) else 'no record')
+                    df_sent_table['sentiment'] = df_sent_table['sentiment'].apply(lambda x: x if (x in [0, 1]) else 'no record')
+
+                    df_sent_table = adjust_time(df_sent_table)
                     if len(result_medication) > 0:
                         df_med = pd.DataFrame(result_medication.values())
                         df_med = df_med.drop(columns='id')
@@ -344,8 +354,8 @@ def mood_history_result(request):
                         df_med['index'] = df_med.index + 1
                         df_med['description'] = df_med['description'].apply(lambda x: x if (x != '') else 'no record')
                         # creating list for displaying sentiment table
-                        for i in range(df_sent.shape[0]):
-                            temp = df_sent.iloc[i]
+                        for i in range(df_sent_table.shape[0]):
+                            temp = df_sent_table.iloc[i]
                             table_data_sent.append(dict(temp))
 
                         # creating list for displaying medication table
@@ -353,11 +363,12 @@ def mood_history_result(request):
                             temp = df_med.iloc[i]
                             table_medication.append(dict(temp))
                     else:
-                        for i in range(df_sent.shape[0]):
-                            temp = df_sent.iloc[i]
+                        for i in range(df_sent_table.shape[0]):
+                            temp = df_sent_table.iloc[i]
                             table_data_sent.append(dict(temp))
 
             except ValueError as e:
+                print(f"the error is: {e}")
                 no_data = True
 
             return render(request, "mood/results.html",
