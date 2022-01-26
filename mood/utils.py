@@ -38,9 +38,9 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(PROJECT_ROOT)
 
 # load my encoder - to ensure the portability
-with open(BASE_DIR + '\encoder', "rb") as f:
-    one_hot = pickle.load(f)
-print(BASE_DIR + 'encoder')
+#with open(BASE_DIR + '\encoder', "rb") as f:
+#    one_hot = pickle.load(f)
+#print(BASE_DIR + 'encoder')
 
 
 
