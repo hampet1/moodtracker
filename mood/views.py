@@ -132,6 +132,8 @@ def message(request):
         # check if we already posted our daily mood and rating
         date_today = today_date()
         any_message = Sentiment.objects.filter(user=user).filter(date_created__date=date_today)
+        # todo allow user additionaly add rating for the same day
+        # todo have a look at the colors in count plot (if we have same score the bars have same color)
         if any_message.exists():
             info_posted = True
             return render(request, "mood/index.html",
