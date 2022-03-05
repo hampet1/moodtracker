@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
 // turning the warning off after 8 second
 $(document).ready(function() {
-    // show the alert
+    // close alert after 8000
     setTimeout(function() {
         $("#med-alert").alert('close');
         $("#med-info").alert('close');
@@ -62,6 +62,26 @@ $(document).ready(function() {
         $('#med-info-error').alert('close');
     }, 8000);
 });
+
+
+
+// asking user whether to proceed or not even though the medication was not found in the database
+document.addEventListener('DOMContentLoaded', ()=> {
+    const my_button = document.querySelector('#my-button');
+
+      if (my_button){
+          my_button.addEventListener('click', ()=> {
+
+            let confirmation = confirm("would you like to proceed anyway?")
+            if (confirmation){
+                alert("ahksdkjashdkj");
+            }else{
+                alert("noo");
+           }
+      });
+    }
+});
+
 
 
 

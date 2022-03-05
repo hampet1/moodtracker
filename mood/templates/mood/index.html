@@ -51,7 +51,7 @@
                  </div>
                     <div class="form-group">
                      <label for="med-name">Name of medication: </label>
-                        <input type="text" class="form-control" id="med-name" name="med-name-add" placeholder="e.g. Serequil (50 mg)">
+                        <input type="text" class="form-control" id="med-name" name="med-name-add" placeholder="e.g. serequil">
                      </div>
                     <label for="med-delete">Describe your medication or add any note:</label>
                         <textarea autofocus class="form-control" aria-label="With textarea" name="med-description" id="med-delete" placeholder="e.g. I felt a bit light-headed."></textarea>
@@ -87,7 +87,7 @@
                  </div>
                     <div class="form-group">
                      <label for="med-name">Name of medication: </label>
-                        <input type="text" class="form-control" id="med-del-name" name="med-name-del" placeholder="e.g. Serequil (50 mg)">
+                        <input type="text" class="form-control" id="med-del-name" name="med-name-del" placeholder="e.g. serequil ">
                      </div>
                     <label for="med-del">Describe your medication or add any note</label>
                         <textarea autofocus class="form-control" aria-label="With textarea" name="med-description" id="med-del" placeholder="e.g. I felt a bit light-headed."></textarea>
@@ -119,8 +119,49 @@
 {% endif %}
 
 {% if info_med_error %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script type="text/javascript">
+// great solution - how to get a Django CSRF token from CSRF Cookies
+// https://stackoverflow.com/questions/19333098/403-forbidden-error-when-making-an-ajax-post-request-in-django-framework
+
+var csrftoken = $.cookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+const confirmation = confirm("would you like to proceed with this medicine even though the name was not found in the internation database");
+if (confirmation){
+    const proceed = "proceed"
+    const proceed_medicine = JSON.stringify(proceed)
+    $.ajax({
+        url: "/home/ajax/",
+        type: "POST",
+        contentType: 'application/json',
+        data: JSON.stringify(proceed),
+        success: function () {
+            alert("Your medication was added!");
+        }
+    });
+
+}else {
+    alert("something went wrong!");
+}
+</script>
+
 <div id="med-info-error" class="alert alert-danger" role="alert">
-  Your medication was not found in National Library of Medicine (NIH) database, please check the name again!
+  Your medication was not found in National Library of Medicine (NIH) database!
 </div>
 {% endif %}
 

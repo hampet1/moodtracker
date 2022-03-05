@@ -14,4 +14,5 @@ urlpatterns = [
     path('mood_history_result/', views.mood_history_result, name="mood_history_result"),
     path('download_pdf/', views.download_pdf, name="download_pdf"),
     path('guideline/', views.guideline, name="guideline"),
+    path('ajax/', views.ajax, name="ajax")
 ]

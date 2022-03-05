@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+import json
 from .models import Sentiment, Medication, DeletedMedication
 
 from django.contrib.auth.models import User
@@ -226,6 +226,35 @@ def mood_history(request):
         return render(request, "mood/error404.html")
 
 
+def ajax(request):
+    """
+    we have to deserialize json
+    https://stackoverflow.com/questions/25791913/querydict-always-empty-from-ajax-post
+    """
+    print("it worked")
+
+    if request.method == "POST" and request.user.is_authenticated:
+        user = request.user
+        print("our request in get_ajax: ", request.POST)
+        # djanco can't deserialize json so we have to do it
+        body_unicode = request.body.decode('utf-8')
+        received_json = json.loads(body_unicode)
+        med_name_session = request.session['med_session']
+        med_description_session = request.session['med_description_session']
+        if received_json == 'proceed':
+            duplicate_check = Medication.objects.filter(user=user, name_of_medication=med_name_session)
+            if duplicate_check.exists():
+                print("value is duplicated")
+            else:
+                Medication.objects.create(user=user, name_of_medication=med_name_session, description=med_description_session)
+                print("med added")
+
+
+            return render(request, "mood/mood_history.html")
+
+
+
+
 def medication_update(request):
     med_name_add = None
     med_description = None
@@ -234,11 +263,17 @@ def medication_update(request):
     info_med_duplicate = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
+        print("our post is: ", request.POST)
         med_name_add = str(request.POST['med-name-add'])
-        # checking using API of national library of medicine whether a given medication exists or not
+        # store it into session as well
+        session_medication = med_name_add
+        request.session['med_session'] = session_medication
+        session_description = str(request.POST['med-description'])
+        request.session['med_description_session'] = session_description
 
+        # checking using API of national library of medicine whether a given medication exists or not
         if check_medication(med_name_add) == 0:
-            # adding medication to the database
+            # adding medication to the database, if it was found
             med_description = str(request.POST['med-description'])
             # make sure there are no duplicates
             duplicate_check = Medication.objects.filter(user=user, name_of_medication=med_name_add)
@@ -250,9 +285,14 @@ def medication_update(request):
             return render(request, "mood/index.html", {'info_med': info_med,
                                                        'info_med_duplicate': info_med_duplicate})
         else:
+            # if medication was not found ask user if they want to proceed
             info_med_error = True
+            print("we are getting there")
             return render(request, "mood/index.html", {'info_med_error': info_med_error,
                                                        })
+    else:
+        return render(request, "mood/error404.html")
+
 
 
 def medication_delete(request):
