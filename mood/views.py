@@ -1,6 +1,6 @@
 from django.shortcuts import render
 import json
-from .models import Sentiment, Medication, DeletedMedication
+from .models import Sentiment, Medication, DeletedMedication, check_if_message_exist
 
 from django.contrib.auth.models import User
 from django.template.defaulttags import register
@@ -102,9 +102,18 @@ def index(request):
 
 def message(request):
     """
-    pk and id is the same thing
-    message - is related_name
-    request.method == "POST"
+    4 main variables:
+    message_input and rating_input keep track of input values
+    any_message, any_rating - check whether a message or a rating have been already submitted on a particular day
+
+
+    we can submit only one message and rating a day, we can submit them simultaneously or one at a time
+
+    info variable - says that your request (message or rating) was submitted successfuly
+    info_posted - says that you've already conducted daily report
+
+    message_new - in edge cases if use has not posted any message yet
+
     """
     sentiment = None
     rating = None
@@ -134,6 +143,14 @@ def message(request):
         any_message = Sentiment.objects.filter(user=user).filter(date_created__date=date_today)
         # todo allow user additionaly add rating for the same day
         # todo have a look at the colors in count plot (if we have same score the bars have same color)
+
+
+
+
+        # checking a given message or rating already exists
+        res = check_if_message_exist(user, date_today)
+        print("res of our function is: ", res)
+
         if any_message.exists():
             info_posted = True
             return render(request, "mood/index.html",

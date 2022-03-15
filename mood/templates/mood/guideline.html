@@ -21,9 +21,21 @@
 
 {% block body %}
 
-<h6>max length of our message is 280 characters</h6>
-<h6> allowed just one rating a day </h6>
-<h6> mention about machine learning model - disclaimer etc - discribe type of the model LSTM technology etc.</h6>
+<div class="markup-replacement-slot markup-replacement-slot-0" data-slot-position="0"></div>
+<h2> Main rules of this application </h2>
+<ol>
+<li> The main point of this app is to allow users with common types of mood disorders such as major depression, dysthymia (dysthymic disorder), bipolar disorder, mo
+od disorder due to a general medical condition, and substance-induced mood disorder to track their mood </li>
+<li> This application is designed to keep track of your mood using both objective and subjective approach.</li>
+<li> Subjective approach refers to a ordinary daily rating of your mood. Unfortunately sometimes it's hard to conduct good personal judgement so a neural network is
+ implemented to provide more objective way to rate your day based on your daily mood description </li>
+<li> Your daily rating is on a scale 1 to 10, where 10 is the best and 1 is the worst.</li>
+<li> To keep it simple and tidy just one rating and one message is allowed to submit a day</li>
+<li> You can submit your day description (message) and your (daily rating) simultaneously or one at a time </li>
+</ol>
+<h6> Neural network model based on LSTM technology takes care of your rating based on your daily mood description. Your message is evaluated either as negative (0)
+or positive (1).</h6>
+
 
     {% endblock %}
 

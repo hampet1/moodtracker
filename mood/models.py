@@ -7,6 +7,25 @@ from django.db.models import Q
 
 from django.contrib.auth.models import User
 
+
+
+def check_if_message_exist(user, date_today):
+    message_content = Sentiment.objects.filter(user=user).filter(date_created__date=date_today)
+    any_message = str(message_content[0]).split(",")[1].strip()
+    any_rating = str(message_content[0]).split(",")[3].strip()
+    print("any_message: ", any_message)
+    print("any_rating: ", any_rating)
+    if any_message == '' and any_rating == '0':
+        return "no content"
+    elif any_message != '' and any_rating == '0':
+        return "no rating"
+    elif any_message == '' and any_rating != '0':
+        return 'no message'
+    else:
+        return "both exists"
+
+
+
 class Sentiment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sentiment", null=True)
     message = models.TextField(max_length=280)
