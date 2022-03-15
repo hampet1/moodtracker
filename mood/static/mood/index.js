@@ -10,6 +10,22 @@ document.addEventListener('DOMContentLoaded', ()=>{
               document.querySelector('#submit').disabled = true;
         }
    }
+
+    // checking whether we picked any rating or not
+    // without this functionality i would not be able to submit rating regardless the message
+    const my_rating = document.querySelector("#rating");
+    my_rating.addEventListener('click', ()=>{
+        const possible_values = [1,2,3,4,5,6,7,8,9,10];
+        var cur_value = parseInt(my_rating.value);
+        if(possible_values.includes(cur_value)){
+            document.querySelector('#submit').disabled = false;
+        }else{
+            document.querySelector('#submit').disabled = true;
+        }
+    });
+
+
+
    document.querySelector('#med-name').onkeyup = ()=> {
         if(document.querySelector('#med-name').value.length > 0){
             document.querySelector('#submit-med').disabled = false;
