@@ -122,7 +122,9 @@ def message(request):
     date_today = None
     message = None
     message_new = None
-    info_posted = None
+    info_both_posted = None
+    info_rating_posted = None
+    info_message_posted = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
         # load json and create model
@@ -148,16 +150,24 @@ def message(request):
 
 
         # checking a given message or rating already exists
-        res = check_if_message_exist(user, date_today)
-        print("res of our function is: ", res)
+        message_uploaded = check_if_message_exist(user, date_today)
+        print("res of our function is: ", message_uploaded)
 
-        if any_message.exists():
-            info_posted = True
+        if message_uploaded is not None:
+            if message_uploaded == "no rating":
+                info_message_posted = True
+            elif message_uploaded == "no message":
+                info_rating_posted = True
+            else:
+                # both exists
+                info_both_posted = True
             return render(request, "mood/index.html",
                           {
                               'message': message_new,
                               "info": info,
-                              "info_posted": info_posted,
+                              "info_both_posted": info_both_posted,
+                              "info_rating_posted": info_rating_posted,
+                              "info_message_posted": info_message_posted
                           })
         else:
             # evaluate loaded model on test data
@@ -209,7 +219,9 @@ def message(request):
                       {
                           'message': message_new,
                           "info": info,
-                          "info_posted": info_posted,
+                          "info_both_posted": info_both_posted,
+                          "info_rating_posted": info_rating_posted,
+                          "info_message_posted": info_message_posted
                       })
 
     else:

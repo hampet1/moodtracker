@@ -10,14 +10,37 @@ from django.contrib.auth.models import User
 
 
 def check_if_message_exist(user, date_today):
+    """
+    check if message and rating was already uploaded
+    """
+    # getting message_id
+    message_id = Sentiment.objects.filter(user=user).filter(date_created__date=date_today).values_list('id', flat=True)
+    # allow just one record per day
     message_content = Sentiment.objects.filter(user=user).filter(date_created__date=date_today)
-    any_message = str(message_content[0]).split(",")[1].strip()
-    any_rating = str(message_content[0]).split(",")[3].strip()
-    print("any_message: ", any_message)
-    print("any_rating: ", any_rating)
+    print("message content is: ", message_content)
+    print("message id is: ",message_id[0])
+    try:
+        any_message = str(message_content[0]).split(",")[1].strip()
+    except IndexError as e:
+        print(f"the error is {e}")
+        any_message = ''
+    try:
+        any_rating = str(message_content[0]).split(",")[3].strip()
+    except IndexError as e:
+        print(f"the error is {e}")
+        any_rating = '0'
     if any_message == '' and any_rating == '0':
-        return "no content"
+        return None
     elif any_message != '' and any_rating == '0':
+        print("new message content is :", message_content)
+        print("message id is: ", message_id[0])
+        print("message id type is: ", type(message_id))
+        my_object = Sentiment.objects.get(pk=int(message_id[0]))
+        my_object.rating = 5
+        my_object.save()
+        message_content = Sentiment.objects.filter(user=user).filter(date_created__date=date_today)
+        print("updated message content: ", message_content)
+
         return "no rating"
     elif any_message == '' and any_rating != '0':
         return 'no message'
