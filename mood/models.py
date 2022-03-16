@@ -9,16 +9,31 @@ from django.contrib.auth.models import User
 
 
 
+def update_existing_record(user, date_today, column, rating = None, message = None, sentiment = None):
+    """
+    update record in our database in case just rating or sentiment exists
+    """
+    message_id = Sentiment.objects.filter(user=user).filter(date_created__date=date_today).values_list('id', flat=True)
+    try:
+        my_record = Sentiment.objects.get(pk=int(message_id[0]))
+    except IndexError as e:
+        print(f"the exception is: {e}")
+
+    if column == 'rating':
+        my_record.rating = rating
+        my_record.save()
+    if column == 'message':
+        my_record.message = message
+        my_record.sentiment = sentiment
+        my_record.save()
+
 def check_if_message_exist(user, date_today):
     """
     check if message and rating was already uploaded
     """
-    # getting message_id
-    message_id = Sentiment.objects.filter(user=user).filter(date_created__date=date_today).values_list('id', flat=True)
     # allow just one record per day
     message_content = Sentiment.objects.filter(user=user).filter(date_created__date=date_today)
     print("message content is: ", message_content)
-    print("message id is: ",message_id[0])
     try:
         any_message = str(message_content[0]).split(",")[1].strip()
     except IndexError as e:
@@ -32,15 +47,6 @@ def check_if_message_exist(user, date_today):
     if any_message == '' and any_rating == '0':
         return None
     elif any_message != '' and any_rating == '0':
-        print("new message content is :", message_content)
-        print("message id is: ", message_id[0])
-        print("message id type is: ", type(message_id))
-        my_object = Sentiment.objects.get(pk=int(message_id[0]))
-        my_object.rating = 5
-        my_object.save()
-        message_content = Sentiment.objects.filter(user=user).filter(date_created__date=date_today)
-        print("updated message content: ", message_content)
-
         return "no rating"
     elif any_message == '' and any_rating != '0':
         return 'no message'
