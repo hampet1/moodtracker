@@ -118,6 +118,12 @@
 </div>
 {% endif %}
 
+{% if message_success %}
+<div id="data-processed-info-message" class="alert alert-info" role="alert">
+  Your daily message was processed successfully!
+</div>
+{% endif %}
+
 
 {% if info_med %}
 <div id="med-info" class="alert alert-info" role="alert">

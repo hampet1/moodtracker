@@ -36,31 +36,24 @@ def check_if_message_exist(user, date_today):
     no_record_for_today = False
     message_id = Sentiment.objects.filter(user=user).filter(date_created__date=date_today).values_list('id', flat=True)
     try:
-        print("message id is: ", message_id)
         message_id = message_id[0]
         try:
-            print("there you are")
             my_record = Sentiment.objects.get(pk=message_id)
             message = my_record.message
             rating = my_record.rating
-            print("my message is: ", message)
-            print("my message type is: ", type(message))
-            print("my rating is: ", rating)
         except Exception as e:
-            print(f"the error 1 is {e}")
+            print(f"the error is {e}")
     except Exception as e:
-        print(f"the error 2 is {e}")
+        print(f"the error is {e}")
         no_record_for_today = True
 
     if no_record_for_today:
-        print("this one is working")
         return None
-    elif message != '' and rating == '0':
+    elif message != None and rating == 0:
         return "no rating"
-    elif message == '' and rating != '0':
+    elif message == None and rating != 0:
         return 'no message'
     else:
-        print("both already exists")
         return "both exists"
 
 
@@ -74,7 +67,7 @@ def create_record(user, type_of_input, rating=None, message=None, sentiment=None
         Sentiment.objects.create(user=user, message=message, sentiment=sentiment,
                                  rating=int(rating))
     elif type_of_input == 'rating':
-        Sentiment.objects.create(user=user, message='', sentiment=None, rating=int(rating))
+        Sentiment.objects.create(user=user, message=None, sentiment=None, rating=int(rating))
     elif type_of_input == 'message':
         Sentiment.objects.create(user=user, message=message, sentiment=sentiment,
                                  rating=0)
@@ -84,7 +77,7 @@ def create_record(user, type_of_input, rating=None, message=None, sentiment=None
 
 class Sentiment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sentiment", null=True)
-    message = models.TextField(max_length=280)
+    message = models.TextField(max_length=280, null=True, blank=True)
     sentiment = models.IntegerField(null=True)
     rating = models.PositiveIntegerField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)

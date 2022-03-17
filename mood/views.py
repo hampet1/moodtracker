@@ -36,6 +36,25 @@ def get_range(value):
     return range(1, value)
 
 
+def determine_sentiment(text):
+    json_file = open(model_path, 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    loaded_model = model_from_json(loaded_model_json)
+    # load weights into new model
+    loaded_model.load_weights(weights_path)
+    loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    try:
+        pred = (loaded_model.predict(text) > 0.5).astype("int32")
+        # our model prediction
+        if np.average(pred) < 0.5:
+            return 0
+        else:
+            return 1
+    except Exception as e:
+        print(f"something went wrong: {e}")
+
+
 def index(request):
     if request.user.is_authenticated:
         user = request.user
@@ -65,12 +84,14 @@ def message(request):
     message_new - in edge cases if use has not posted any message yet
 
     """
-    sentiment = None
+    sentiment_determined = None
     rating_input = None
     chart = None
     info = None
     date_today = None
     message = None
+    message_success = None
+    rating_success = None
     message_new = None
     rating_success = None
     info_both_posted = None
@@ -78,13 +99,6 @@ def message(request):
     info_message_posted = None
     if request.method == "POST" and request.user.is_authenticated:
         user = request.user
-        # load json and create model
-        json_file = open(model_path, 'r')
-        loaded_model_json = json_file.read()
-        json_file.close()
-        loaded_model = model_from_json(loaded_model_json)
-        # load weights into new model
-        loaded_model.load_weights(weights_path)
         # our input message
         message_input = request.POST['message']
         rating_input = request.POST['rating']
@@ -97,24 +111,28 @@ def message(request):
 
         # checking a given message or rating already exists
         message_uploaded = check_if_message_exist(user, date_today)
-        print("res of our function is: ", message_uploaded)
+
         # check if there is a record already
-        if message_uploaded is not None:
+        if message_uploaded == 'both exists' or message_uploaded == 'no rating' or message_uploaded == 'no message':
             if message_uploaded == "no rating":
-                print("no rating posted")
                 if rating_input:
-                    update_existing_record(user, date_today,'rating', rating = rating_input)
+                    update_existing_record(user, date_today,'rating', rating=rating_input)
                     rating_success = True
                 else:
-                    print("you have alrady posted that")
                     info_rating_posted = True
             elif message_uploaded == "no message":
-                info_message_posted = True
+                # preprocess text
+                text = input_layer(message_input)
+                # predictions
+                sentiment_determined = determine_sentiment(text)
+                if message_input:
+                    update_existing_record(user, date_today,'message', message=message_input, sentiment=sentiment_determined)
+                    message_success = True
+                else:
+                    info_message_posted = True
             else:
                 # both exists
                 info_both_posted = True
-            res = Sentiment.objects.filter(user=user).filter(date_created__date=date_today)
-            print("it worked: ", res)
             return render(request, "mood/index.html",
                           {
                               'message': message_new,
@@ -123,58 +141,27 @@ def message(request):
                               "info_rating_posted": info_rating_posted,
                               "info_message_posted": info_message_posted,
                               "rating_success": rating_success,
+                              "message_success": message_success,
                           })
         else:
             # if there is no record for today
             # three option message and rating, only rating only massage
             if rating_input and not message_input:
                 create_record(user, 'rating', rating=rating_input)
-                res = Sentiment.objects.filter(user=user).filter(date_created__date=date_today)
-                print("it worked: ", res)
-            else:
-
-
-                print("i have already posted it today !!!! - to prevent from overriting message!")
-                # evaluate loaded model on test data
-                loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-                # preprocess text
+                rating_success = True
+            elif message_input and not rating_input:
                 text = input_layer(message_input)
-
-                # predictions
-                try:
-                    pred = (loaded_model.predict(text) > 0.5).astype("int32")
-                    # our model prediction
-
-                    if np.average(pred) < 0.5:
-                        sentiment = 0
-                    else:
-                        sentiment = 1
-                except Exception as e:
-                    print(f"something went wrong: {e}")
-
-                if rating_input != 0:
-                    try:
-                        if sentiment is not None:
-                            print("this one is printing")
-                            rating_input = request.POST['rating']
-                            Sentiment.objects.create(user=user, message=message_input, sentiment=sentiment,
-                                                     rating=int(rating_input))
-                            info = True
-                    except ValueError as e:
-                        Sentiment.objects.create(user=user, rating=0)
-                        info = True
-                else:
-                    try:
-                        if sentiment is not None:
-                            print("this one is working")
-                            rating_input = request.POST['rating']
-                            Sentiment.objects.create(user=user, message=message_input, sentiment=sentiment,
-                                                     rating=0)
-                            info = True
-                    except ValueError as e:
-                        Sentiment.objects.create(user=user, rating=0)
-
-            #  used in edge case when we do not have any messages for this user
+                sentiment_determined = determine_sentiment(text)
+                create_record(user, 'message', message=message_input, sentiment=sentiment_determined)
+                message_success = True
+            elif message_input and rating_input:
+                text = input_layer(message_input)
+                sentiment_determined = determine_sentiment(text)
+                create_record(user, 'both', rating=rating_input, message=message_input, sentiment=sentiment_determined)
+                info = True
+            else:
+                print("something went wrong")
+            # used in edge case when we do not have any messages for this user
             try:
                 message_new = Sentiment.objects.get(pk=user.id)
             except message_new.DoesNotExist:
@@ -186,7 +173,9 @@ def message(request):
                           "info": info,
                           "info_both_posted": info_both_posted,
                           "info_rating_posted": info_rating_posted,
-                          "info_message_posted": info_message_posted
+                          "info_message_posted": info_message_posted,
+                          "rating_success": rating_success,
+                          "message_success": message_success,
                       })
 
     else:

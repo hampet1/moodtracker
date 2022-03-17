@@ -78,6 +78,7 @@ $(document).ready(function() {
         $('#info-posted-2').alert('close');
         $('#info-posted-3').alert('close');
         $('#data-processed-info-rating').alert('close');
+        $('#data-processed-info-message').alert('close');
         $('#med-info-error').alert('close');
     }, 8000);
 });
