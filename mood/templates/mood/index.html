@@ -112,6 +112,13 @@
 </div>
 {% endif %}
 
+{% if rating_success %}
+<div id="data-processed-info-rating" class="alert alert-info" role="alert">
+  Your rating was processed successfully!
+</div>
+{% endif %}
+
+
 {% if info_med %}
 <div id="med-info" class="alert alert-info" role="alert">
   Your medication was added successfully!
@@ -185,23 +192,25 @@ if (confirmation){
 </div>
 {% endif %}
 
-{% if info_both_posted %}
-<div id="info-posted_2" class="alert alert-danger" role="alert">
-  You have already conducted your daily report (both description and rating)!
-</div>
-{% endif %}
-
-{% if info_rating_posted %}
-<div id="info-posted_3" class="alert alert-danger" role="alert">
-  You have already submitted your daily message, please submit your rating!
-</div>
-{% endif %}
 
 {% if info_message_posted %}
 <div id="info-posted" class="alert alert-danger" role="alert">
   You have already submitted your daily rating, please submit your day description!
 </div>
 {% endif %}
+
+{% if info_both_posted %}
+<div id="info-posted-2" class="alert alert-danger" role="alert">
+  You have already conducted your daily report (both description and rating)!
+</div>
+{% endif %}
+
+{% if info_rating_posted %}
+<div id="info-posted-3" class="alert alert-danger" role="alert">
+  You have already submitted your daily message, please submit your rating!
+</div>
+{% endif %}
+
 
 <form action="{% url 'message'%}", method="post">
 
