@@ -41,18 +41,8 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
+This app would like to allow people with common types of mood disorders such as major depression, dysthymia (dysthymic disorder), bipolar disorder, substance-induced mood disorder, etc. to track their current mood, mood stability/swings and their medication in order to help the users and their mental health workers to see the progress or regress of their mental states and based on it adjust their medication or other treatments.
 
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should implement DRY principles to the rest of your life :smile:
-
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
-
-Use the `BLANK_README.md` to get started.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
@@ -74,7 +64,7 @@ Use the `BLANK_README.md` to get started.
    ```sh
    git clone https://github.com/hampet1/moodtracker.git
    ```
-3. Install PIP packages
+3. Install packages
    ```sh
    pip install -r requirements.txt
    ```
@@ -82,9 +72,6 @@ Use the `BLANK_README.md` to get started.
    ```js
    python manage.py runserver
    ```
-
-
-
 
 
 <!-- USAGE EXAMPLES -->
