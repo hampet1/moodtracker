@@ -5,7 +5,7 @@
 <br />
 <div align="center">
   <a>
-    <img src="images/logo.png" alt="Logo" width="140" height="140">
+    <img src="images/logo.png" alt="Logo" width="180" height="180">
   </a>
 
   <h3 align="center">Track your mood and stay happy!</h3>
