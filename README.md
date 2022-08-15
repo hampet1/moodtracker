@@ -5,7 +5,7 @@
 <br />
 <div align="center">
   <a>
-    <img src="images/logo.png" alt="Logo" width="120" height="120">
+    <img src="images/logo.png" alt="Logo" width="140" height="140">
   </a>
 
   <h3 align="center">Track your mood and stay happy!</h3>
@@ -77,9 +77,9 @@ This app would like to allow people with common types of mood disorders such as 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+The optimal way is to conduct a daily update to allow this app to precisely monitor and track your mood state. 
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+For more info please checkout the website guideline [guideline](https://trackmood.herokuapp.com/home/guideline/)
 
 
 
