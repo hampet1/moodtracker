@@ -8,7 +8,7 @@
     <img src="logo.png" alt="Logo" width="120" height="120">
   </a>
 
-  <h3 align="center">Track your mood and stay happy!r</h3>
+  <h3 align="center">Track your mood and stay happy!</h3>
 
 </div>
 
