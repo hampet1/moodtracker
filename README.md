@@ -79,7 +79,7 @@ This app would like to allow people with common types of mood disorders such as 
 
 The optimal way is to conduct a daily update to allow this app to precisely monitor and track your mood state. 
 
-For more info please checkout the website guideline [guideline](https://trackmood.herokuapp.com/home/guideline/)
+For more info please checkout the website [guideline](https://trackmood.herokuapp.com/home/guideline/)
 
 
 
