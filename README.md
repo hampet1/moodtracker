@@ -5,7 +5,7 @@
 <br />
 <div align="center">
   <a>
-    <img src="images/logo.png" alt="Logo" width="180" height="180">
+    <img src="images/logo.png" alt="Logo" width="180" height="180" (https://trackmood.herokuapp.com)>
   </a>
 
   <h3 align="center">Track your mood and stay happy!</h3>
@@ -42,7 +42,6 @@
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
 This app would like to allow people with common types of mood disorders such as major depression, dysthymia (dysthymic disorder), bipolar disorder, substance-induced mood disorder, etc. to track their current mood, mood stability/swings and their medication in order to help the users and their mental health workers to see the progress or regress of their mental states and based on it adjust their medication or other treatments.
-
 
 
 
