@@ -41,16 +41,19 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-This app would like to allow people with common types of mood disorders such as major depression, dysthymia (dysthymic disorder), bipolar disorder, substance-induced mood disorder, etc. to track their current mood, mood stability/swings and their medication in order to help the users and their mental health workers to see the progress or regress of their mental states and based on it adjust their medication or other treatments.
+This app would like to allow people with common types of mood disorders such as major depression, dysthymia (dysthymic disorder), bipolar disorder, substance-induced mood disorder, etc. to track their current mood, mood stability/swings and their medication in order to help the users and their mental health workers to see the progress or regress of their mental states and based on it adjust their medication or other treatments.<br>
 
+* keep track on your mental health based on combination of your daily mood, mood stability and current medication you are on
 * the app uses LSTM (long short term memory) model for sentiment analysis of your daily description
+* review your mood history by viewing graphs
+* view and download your mood and medication information in form of tables
 
 
+
+
+
+## Watch the full video about mood tracker and checkout deployed version 
 <h3>You can checkout deployed app here <a href="https://trackmood.herokuapp.com">here</a></h3>
-
-
-## Watch the full video about this project
-
 
 
 <!-- GETTING STARTED -->
