@@ -23,7 +23,7 @@
     </li>
     <li>
       <a href="#Watch-the-full-video-about-mood-tracker-or-checkout-deployed-version
-          ">Watch video</a>
+          ">Watch video or check out the app</a>
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
@@ -54,7 +54,7 @@ This app would like to allow people with common types of mood disorders such as 
 
 
 
-## Watch the full video about mood tracker or checkout deployed version
+## Watch the full video about mood tracker or checkout the app
 
 <h4>Watch the video <a href="https://trackmood.herokuapp.com">here</a></h4>
 <h4>You can checkout the app <a href="https://trackmood.herokuapp.com">here</a></h4>
