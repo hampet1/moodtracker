@@ -56,7 +56,7 @@ This app allows people with common types of mood disorders such as major depress
 
 ## Watch the full video about mood tracker or checkout the app
 
-<h4>Watch the video <a href="https://trackmood.herokuapp.com">here</a></h4>
+<h4>Watch the video <a href="https://www.youtube.com/watch?v=ctpBHjjWFF4">here</a></h4>
 <h4>You can checkout the app <a href="https://trackmood.herokuapp.com">here</a></h4>
 
 
